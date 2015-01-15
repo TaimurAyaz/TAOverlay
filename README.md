@@ -1,3 +1,4 @@
+![TAOverlay](https://raw.github.com/TaimurAyaz/TAOverlay/blob/master/TAOverlayBanner.png)
 
 # TAOverlay
 
