@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/TaimurAyaz/TAOverlay.svg?branch=master)](https://travis-ci.org/TaimurAyaz/TAOverlay) 
+
 ![TAOverlay](https://raw.githubusercontent.com/TaimurAyaz/TAOverlay/master/TAOverlayBanner.png)
 
 **TAOverlay** is a minimalistic and simple overlay meant to display useful information to the user.  
