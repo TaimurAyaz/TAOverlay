@@ -1,7 +1,5 @@
 ![TAOverlay](https://raw.githubusercontent.com/TaimurAyaz/TAOverlay/master/TAOverlayBanner.png)
 
-# TAOverlay
-
 **TAOverlay** is a minimalistic and simple overlay meant to display useful information to the user.  
 
 ![TAOverlay](https://raw.githubusercontent.com/TaimurAyaz/TAOverlay/master/screenshot.png)
