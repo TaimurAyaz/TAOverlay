@@ -14,6 +14,18 @@
 		B5DCAD521A5FADFE0078C3C8 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B5DCAD511A5FADFE0078C3C8 /* Images.xcassets */; };
 		B5DCAD551A5FADFE0078C3C8 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = B5DCAD531A5FADFE0078C3C8 /* LaunchScreen.xib */; };
 		B5DCAD611A5FADFE0078C3C8 /* TAOverlayTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B5DCAD601A5FADFE0078C3C8 /* TAOverlayTests.m */; };
+		B5F617A81A66775A00998537 /* TAOverlay.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B5F617A51A66775A00998537 /* TAOverlay.bundle */; };
+		B5F617A91A66775A00998537 /* TAOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = B5F617A71A66775A00998537 /* TAOverlay.m */; };
+		B5F617B61A66778300998537 /* blur@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F617AB1A66778300998537 /* blur@2x.png */; };
+		B5F617B71A66778300998537 /* error@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F617AC1A66778300998537 /* error@2x.png */; };
+		B5F617B81A66778300998537 /* excl@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F617AD1A66778300998537 /* excl@2x.png */; };
+		B5F617B91A66778300998537 /* info@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F617AE1A66778300998537 /* info@2x.png */; };
+		B5F617BA1A66778300998537 /* LaunchImage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F617AF1A66778300998537 /* LaunchImage@2x.png */; };
+		B5F617BB1A66778300998537 /* leaf@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F617B01A66778300998537 /* leaf@2x.png */; };
+		B5F617BC1A66778300998537 /* spin@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F617B11A66778300998537 /* spin@2x.png */; };
+		B5F617BD1A66778300998537 /* square@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F617B21A66778300998537 /* square@2x.png */; };
+		B5F617BE1A66778300998537 /* success@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F617B31A66778300998537 /* success@2x.png */; };
+		B5F617C01A66778300998537 /* TAOverlayImage@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = B5F617B51A66778300998537 /* TAOverlayImage@2x.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +52,19 @@
 		B5DCAD5A1A5FADFE0078C3C8 /* TAOverlayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TAOverlayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5DCAD5F1A5FADFE0078C3C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B5DCAD601A5FADFE0078C3C8 /* TAOverlayTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TAOverlayTests.m; sourceTree = "<group>"; };
+		B5F617A51A66775A00998537 /* TAOverlay.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TAOverlay.bundle; sourceTree = "<group>"; };
+		B5F617A61A66775A00998537 /* TAOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TAOverlay.h; sourceTree = "<group>"; };
+		B5F617A71A66775A00998537 /* TAOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TAOverlay.m; sourceTree = "<group>"; };
+		B5F617AB1A66778300998537 /* blur@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "blur@2x.png"; sourceTree = "<group>"; };
+		B5F617AC1A66778300998537 /* error@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "error@2x.png"; sourceTree = "<group>"; };
+		B5F617AD1A66778300998537 /* excl@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "excl@2x.png"; sourceTree = "<group>"; };
+		B5F617AE1A66778300998537 /* info@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "info@2x.png"; sourceTree = "<group>"; };
+		B5F617AF1A66778300998537 /* LaunchImage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "LaunchImage@2x.png"; sourceTree = "<group>"; };
+		B5F617B01A66778300998537 /* leaf@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "leaf@2x.png"; sourceTree = "<group>"; };
+		B5F617B11A66778300998537 /* spin@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "spin@2x.png"; sourceTree = "<group>"; };
+		B5F617B21A66778300998537 /* square@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "square@2x.png"; sourceTree = "<group>"; };
+		B5F617B31A66778300998537 /* success@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "success@2x.png"; sourceTree = "<group>"; };
+		B5F617B51A66778300998537 /* TAOverlayImage@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "TAOverlayImage@2x.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +106,7 @@
 		B5DCAD431A5FADFE0078C3C8 /* TAOverlay */ = {
 			isa = PBXGroup;
 			children = (
+				B5F617A41A66775A00998537 /* TAOverlay */,
 				B5DCAD481A5FADFE0078C3C8 /* AppDelegate.h */,
 				B5DCAD491A5FADFE0078C3C8 /* AppDelegate.m */,
 				B5DCAD4B1A5FADFE0078C3C8 /* ViewController.h */,
@@ -88,6 +114,7 @@
 				B5DCAD4E1A5FADFE0078C3C8 /* Main.storyboard */,
 				B5DCAD511A5FADFE0078C3C8 /* Images.xcassets */,
 				B5DCAD531A5FADFE0078C3C8 /* LaunchScreen.xib */,
+				B5F617AA1A66778300998537 /* images */,
 				B5DCAD441A5FADFE0078C3C8 /* Supporting Files */,
 			);
 			path = TAOverlay;
@@ -117,6 +144,33 @@
 				B5DCAD5F1A5FADFE0078C3C8 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B5F617A41A66775A00998537 /* TAOverlay */ = {
+			isa = PBXGroup;
+			children = (
+				B5F617A51A66775A00998537 /* TAOverlay.bundle */,
+				B5F617A61A66775A00998537 /* TAOverlay.h */,
+				B5F617A71A66775A00998537 /* TAOverlay.m */,
+			);
+			path = TAOverlay;
+			sourceTree = "<group>";
+		};
+		B5F617AA1A66778300998537 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				B5F617AB1A66778300998537 /* blur@2x.png */,
+				B5F617AC1A66778300998537 /* error@2x.png */,
+				B5F617AD1A66778300998537 /* excl@2x.png */,
+				B5F617AE1A66778300998537 /* info@2x.png */,
+				B5F617AF1A66778300998537 /* LaunchImage@2x.png */,
+				B5F617B01A66778300998537 /* leaf@2x.png */,
+				B5F617B11A66778300998537 /* spin@2x.png */,
+				B5F617B21A66778300998537 /* square@2x.png */,
+				B5F617B31A66778300998537 /* success@2x.png */,
+				B5F617B51A66778300998537 /* TAOverlayImage@2x.png */,
+			);
+			path = images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -199,9 +253,20 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5F617B61A66778300998537 /* blur@2x.png in Resources */,
+				B5F617B71A66778300998537 /* error@2x.png in Resources */,
+				B5F617BC1A66778300998537 /* spin@2x.png in Resources */,
+				B5F617B91A66778300998537 /* info@2x.png in Resources */,
+				B5F617BA1A66778300998537 /* LaunchImage@2x.png in Resources */,
+				B5F617B81A66778300998537 /* excl@2x.png in Resources */,
+				B5F617BB1A66778300998537 /* leaf@2x.png in Resources */,
 				B5DCAD501A5FADFE0078C3C8 /* Main.storyboard in Resources */,
+				B5F617C01A66778300998537 /* TAOverlayImage@2x.png in Resources */,
+				B5F617BD1A66778300998537 /* square@2x.png in Resources */,
 				B5DCAD551A5FADFE0078C3C8 /* LaunchScreen.xib in Resources */,
 				B5DCAD521A5FADFE0078C3C8 /* Images.xcassets in Resources */,
+				B5F617A81A66775A00998537 /* TAOverlay.bundle in Resources */,
+				B5F617BE1A66778300998537 /* success@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,6 +285,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B5DCAD4D1A5FADFE0078C3C8 /* ViewController.m in Sources */,
+				B5F617A91A66775A00998537 /* TAOverlay.m in Sources */,
 				B5DCAD4A1A5FADFE0078C3C8 /* AppDelegate.m in Sources */,
 				B5DCAD471A5FADFE0078C3C8 /* main.m in Sources */,
 			);
@@ -414,6 +480,7 @@
 				B5DCAD661A5FADFE0078C3C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B5DCAD671A5FADFE0078C3C8 /* Build configuration list for PBXNativeTarget "TAOverlayTests" */ = {
 			isa = XCConfigurationList;
@@ -422,6 +489,7 @@
 				B5DCAD691A5FADFE0078C3C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
