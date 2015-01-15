@@ -24,11 +24,18 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
+    [self registerNotifications];
+
     self.view.clipsToBounds = YES;
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotifications) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
-    
     heightControl = 170.4;
+    
+    status = nil;
+    
+    showOpaque     = NO;
+    showBar        = YES;
+    showFullscreen = NO;
+    showRect       = NO;
     
     mainTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
     mainTableView.delegate = self;
@@ -37,8 +44,6 @@
     mainTableView.showsHorizontalScrollIndicator = NO;
     mainTableView.separatorColor = [UIColor clearColor];
     [self.view addSubview:mainTableView];
-    
-    status = nil;
     
     items = [[NSMutableArray alloc] init];
     [items addObject:@"TAOverlay"];
@@ -53,11 +58,6 @@
     [items addObject:@"Custom Image"];
     [items addObject:@"Custom Image Array"];
     [items addObject:@""];
-
-    showOpaque     = NO;
-    showBar        = YES;
-    showFullscreen = NO;
-    showRect       = NO;
         
     buttonsView = [[UIView alloc] initWithFrame:CGRectMake(0, ((items.count - 2.0)*50 + 100.0), self.view.frame.size.width, heightControl)];
     buttonsView.backgroundColor = [UIColor colorWithWhite:0.99 alpha:1.0];
@@ -139,6 +139,16 @@
     [dismiss addTarget:self action:@selector(handleTap:) forControlEvents:UIControlEventTouchUpInside];
     [buttonsView addSubview:dismiss];
 
+}
+
+- (void) registerNotifications {
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleNotifications) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logNotifications:) name:TAOverlayWillAppearNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logNotifications:) name:TAOverlayDidAppearNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logNotifications:) name:TAOverlayWillDisappearNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logNotifications:) name:TAOverlayDidDisappearNotification object:nil];
+    
 }
 
 - (void) handleNotifications {
@@ -422,6 +432,11 @@
 
 }
 
+- (void) logNotifications:(NSNotification *)note {
+    
+    NSLog(@"%@ - %@",note.name, note.userInfo);
+    
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
