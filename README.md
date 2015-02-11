@@ -13,6 +13,13 @@
 
 ## Installation
 
+### Cocoapods
+Add the following to your **podfile**
+```
+pod 'TAOverlay', '~> 1.0.1'
+```
+
+### Manual
 * Drag the `TAOverlay/TAOverlay` folder into your project.
 * Ensure that `TAOverlay.bundle` is added to `Targets->Build Phases->Copy Bundle Resources`.
 * import `"TAOverlay.h"`
