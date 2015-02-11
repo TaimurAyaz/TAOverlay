@@ -223,7 +223,7 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 + (void) hideOverlay;
 
 /**
- * Creates and returns a new image object that is masked with the specified mask color.
+ * Shows an overlay with a label and a predefined icon.
  *
  * @param status The text to display on the overlay. If the value is 'nil', overlay is shown without a label.
  * @param options A mask of options indicating the type and appearence of the overlay.
@@ -231,7 +231,7 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 + (void) showOverlayWithLabel:(NSString *)status Options:(TAOverlayOptions)options;
 
 /**
- * Creates and returns a new image object that is masked with the specified mask color.
+ * Shows an overlay with a label and a user defined icon.
  *
  * @param status The text to display on the overlay. If the value is 'nil', overlay is shown without a label.
  * @param image The image to display as an icon on the overlay. The image cannot be 'nil'.
@@ -240,7 +240,7 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 + (void) showOverlayWithLabel:(NSString *)status Image:(UIImage *)image Options:(TAOverlayOptions)options;
 
 /**
- * Creates and returns a new image object that is masked with the specified mask color.
+ * Shows an overlay with a label and an animating, user defined, image array.
  *
  * @param status The text to display on the overlay. If the value is 'nil', overlay is shown without a label.
  * @param imageArray The array containing UIImage objects. Use this if your animation is easily expressable in images. The array cannot be 'nil'.
