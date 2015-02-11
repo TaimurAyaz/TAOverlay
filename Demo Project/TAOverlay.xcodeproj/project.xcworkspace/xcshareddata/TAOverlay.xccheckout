@@ -14,11 +14,11 @@
 		<string>https://github.com/TaimurAyaz/TAOverlay.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>TAOverlay.xcodeproj</string>
+	<string>Demo Project/TAOverlay.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>AB5CCE04131D63FA91439D2D880011059D4FE25B</key>
-		<string>../..</string>
+		<string>../../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/TaimurAyaz/TAOverlay.git</string>
