@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B58385F81A8B07D3008435F3 /* TAOverlay.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B58385F71A8B07D3008435F3 /* TAOverlay.bundle */; };
+		B5216F781A8B1E3A00601443 /* TAOverlay.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B5216F771A8B1E3A00601443 /* TAOverlay.bundle */; };
 		B5DCAD471A5FADFE0078C3C8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B5DCAD461A5FADFE0078C3C8 /* main.m */; };
 		B5DCAD4A1A5FADFE0078C3C8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B5DCAD491A5FADFE0078C3C8 /* AppDelegate.m */; };
 		B5DCAD4D1A5FADFE0078C3C8 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = B5DCAD4C1A5FADFE0078C3C8 /* ViewController.m */; };
@@ -39,7 +39,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		B58385F71A8B07D3008435F3 /* TAOverlay.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TAOverlay.bundle; sourceTree = "<group>"; };
+		B5216F771A8B1E3A00601443 /* TAOverlay.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = TAOverlay.bundle; sourceTree = "<group>"; };
 		B5DCAD411A5FADFE0078C3C8 /* TAOverlay.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TAOverlay.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5DCAD451A5FADFE0078C3C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B5DCAD461A5FADFE0078C3C8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -85,14 +85,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		B58385F61A8B07D3008435F3 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				B58385F71A8B07D3008435F3 /* TAOverlay.bundle */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 		B5DCAD381A5FADFE0078C3C8 = {
 			isa = PBXGroup;
 			children = (
@@ -157,7 +149,7 @@
 		B5F617A41A66775A00998537 /* TAOverlay */ = {
 			isa = PBXGroup;
 			children = (
-				B58385F61A8B07D3008435F3 /* Resources */,
+				B5216F771A8B1E3A00601443 /* TAOverlay.bundle */,
 				B5F617A61A66775A00998537 /* TAOverlay.h */,
 				B5F617A71A66775A00998537 /* TAOverlay.m */,
 			);
@@ -274,7 +266,7 @@
 				B5DCAD551A5FADFE0078C3C8 /* LaunchScreen.xib in Resources */,
 				B5DCAD521A5FADFE0078C3C8 /* Images.xcassets in Resources */,
 				B5F617BE1A66778300998537 /* success@2x.png in Resources */,
-				B58385F81A8B07D3008435F3 /* TAOverlay.bundle in Resources */,
+				B5216F781A8B1E3A00601443 /* TAOverlay.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
