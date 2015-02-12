@@ -88,6 +88,7 @@ You can customize the **TAOverlay** using one of the following:
 ```
 * The `backgroundColor` parameter is the color you want to set as the overlay label text color.
 
+*( More static customization optons below )*
 
 ### Example
 
