@@ -217,6 +217,8 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 
 + (TAOverlay *)shared;
 
+#pragma mark Show/Hide Methods
+
 /**
  *  hides currently shown overlay.
  */
@@ -249,7 +251,30 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
  */
 + (void) showOverlayWithLabel:(NSString *)status ImageArray:(NSArray *)imageArray Duration:(CGFloat)duration Options:(TAOverlayOptions)options;
 
-#pragma mark PROPERTIES
+#pragma mark Customization Methods
+
+/**
+ * Changes the overlay background color to the specified color. Only valid for opaque background.
+ *
+ * @param backgroundColor The color to set as the overlay background color.
+ */
++ (void)setOverlayBackgroundColor:(UIColor *)backgroundColor;
+
+/**
+ * Changes the overlay label font to the specified font.
+ *
+ * @param font The font to set as the overlay label font.
+ */
++ (void)setOverlayLabelFont:(UIFont *)font;
+
+/**
+ * Changes the overlay label text color to the specified color.
+ *
+ * @param color The color to set as the overlay label text color.
+ */
++ (void)setOverlayLabelTextColor:(UIColor *)color;
+
+#pragma mark Properties
 
 /** A boolean value indicating if the overlay allows user interaction. */
 @property (nonatomic, assign) BOOL interaction;
@@ -283,6 +308,15 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 
 /** The Layer for warning, error, info and success icons. */
 @property (nonatomic, retain) CAShapeLayer             *icon;
+
+/** The font of the overlay */
+@property (nonatomic, strong) UIFont                   *overlayFont;
+
+/** The background color of the overlay */
+@property (nonatomic, strong) UIColor                  *overlayBackgroundColor;
+
+/** The font color of the overlay */
+@property (nonatomic, strong) UIColor                  *overlayFontColor;
 
 /** An array of images for use as a custom activity indicator. */
 @property (nonatomic, strong) NSArray                  *imageArray;

@@ -69,6 +69,26 @@ You can hide the **TAOverlay** using:
 + (void) hideOverlay;
 ```
 
+### Customizing TAOverlay
+
+You can customize the **TAOverlay** using one of the following:
+
+```
++ (void)setOverlayBackgroundColor:(UIColor *)backgroundColor;
+```
+* The `backgroundColor` parameter is the color you want to set as the overlay background color.
+
+```
++ (void)setOverlayLabelFont:(UIFont *)font;
+```
+* The `font` parameter is the font you want to set as the overlay label font.
+
+```
++ (void)setOverlayLabelTextColor:(UIColor *)color;
+```
+* The `backgroundColor` parameter is the color you want to set as the overlay label text color.
+
+
 ### Example
 
 ```
@@ -164,7 +184,6 @@ Each notification passes a `userInfo` dictionary holding the Overlay's status st
 
 ## ToDo
 
-* Customization methods
 * Add progress indicator
 * Enhance overlay to more than just providing information
 

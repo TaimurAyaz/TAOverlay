@@ -70,13 +70,15 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
  	return tAOverlay;
 }
 
+#pragma mark Show/Hide Methods
+
 + (void)hideOverlay
 {
 	[[self shared] overlayHide];
 }
 
 + (void)showOverlayWithLabel:(NSString *)status Options:(TAOverlayOptions)options {
-
+    
     [self shared].labelText  = status;
     [[self shared] analyzeOptions:options image:NO imageArray:NO];
 
@@ -99,6 +101,33 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
     [self shared].labelText  = status;
     [self shared].imageArray = imageArray;
     [[self shared] analyzeOptions:options image:NO imageArray:YES];
+}
+
+#pragma mark Customization Methods
+
++ (void)setOverlayBackgroundColor:(UIColor *)backgroundColor {
+    
+    if (backgroundColor != nil)
+    {
+        [self shared].overlayBackgroundColor = backgroundColor;
+    }
+    
+}
+
++ (void)setOverlayLabelFont:(UIFont *)font {
+    
+    if (font != nil)
+    {
+        [self shared].overlayFont = font;
+    }
+}
+
++ (void)setOverlayLabelTextColor:(UIColor *)color {
+    
+    if (color != nil)
+    {
+        [self shared].overlayFontColor = color;
+    }
 }
 
 - (id)init
@@ -216,7 +245,17 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
         self.shouldHide = NO;
     }
     
+    [self setProperties];
+    
     [self overlayMake:self.labelText];
+}
+
+- (void) setProperties {
+    
+    self.overlayFont            = OVERLAY_LABEL_FONT;
+    self.overlayFontColor       = OVERLAY_LABEL_COLOR;
+    self.overlayBackgroundColor = OVERLAY_BACKGROUND_COLOR;
+
 }
 
 - (void)overlayMake:(NSString *)status
@@ -331,6 +370,7 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
     }
 
     background.userInteractionEnabled = interaction;
+    
     if (showBackground) {
         background.backgroundColor = OVERLAY_SHADOW_COLOR;
     } else {
@@ -339,7 +379,7 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
     if (!showBlurred) {
         overlay.translucent = NO;
         overlay.backgroundColor = [UIColor clearColor];
-        overlay.barTintColor = OVERLAY_BACKGROUND_COLOR;
+        overlay.barTintColor = self.overlayBackgroundColor;
     } else {
         overlay.translucent = YES;
         overlay.barTintColor = nil;
@@ -404,8 +444,8 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
  	if (label == nil)
 	{
 		label = [[UILabel alloc] initWithFrame:CGRectZero];
-		label.font = OVERLAY_LABEL_FONT;
-		label.textColor = OVERLAY_LABEL_COLOR;
+		label.font = self.overlayFont;
+		label.textColor = self.overlayFontColor;
 		label.backgroundColor = [UIColor clearColor];
 		label.textAlignment = NSTextAlignmentCenter;
 		label.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
@@ -640,6 +680,34 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
 			[self overlayHide];
 		});
 	}
+}
+
+#pragma mark Property Methods
+
+- (void) setOverlayBackgroundColor:(UIColor *)overlayBackgroundColor {
+    
+    if (overlayBackgroundColor != nil)
+    {
+        overlay.barTintColor = overlayBackgroundColor;
+    }
+    
+}
+
+- (void)setOverlayFont:(UIFont *)overlayFont {
+    
+    if (overlayFont != nil)
+    {
+        label.font = overlayFont;
+        [self overlayDimensionsWithNotification:nil];
+    }
+}
+
+- (void)setOverlayFontColor:(UIColor *)overlayFontColor {
+    
+    if (overlayFontColor != nil)
+    {
+        label.textColor = overlayFontColor;
+    }
 }
 
 #pragma mark UIBezierPath
