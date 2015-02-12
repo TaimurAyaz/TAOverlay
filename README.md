@@ -1,4 +1,8 @@
 [![Build Status](https://travis-ci.org/TaimurAyaz/TAOverlay.svg?branch=master)](https://travis-ci.org/TaimurAyaz/TAOverlay) 
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Platform](https://img.shields.io/badge/platform-iOS-yellow.svg)
+![Pod](https://img.shields.io/cocoapods/v/TAOverlay.svg) 
+![Level](https://img.shields.io/badge/level-over%209000-1CCDD6.svg)
 
 ![TAOverlay](https://raw.githubusercontent.com/TaimurAyaz/TAOverlay/master/TAOverlayBanner.png)
 
