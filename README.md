@@ -23,7 +23,7 @@
 
 Add the following to your **podfile**
 ```
-pod 'TAOverlay', '~> 1.3'
+pod 'TAOverlay', '~> 1.4'
 ```
 ### Manual
 
