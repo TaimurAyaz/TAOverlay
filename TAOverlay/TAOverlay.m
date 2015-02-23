@@ -22,9 +22,9 @@ NSString * const TAOverlayDidDisappearNotification  = @"TAOverlayDidDisappearNot
 NSString * const TAOverlayWillAppearNotification    = @"TAOverlayWillAppearNotification";
 NSString * const TAOverlayDidAppearNotification     = @"TAOverlayDidAppearNotification";
 
-NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey";
+NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserInfoKey";
 
-#pragma mark UIBezierPath Category Implementation
+#pragma mark UIImage Category Implementation
 
 @implementation UIImage (TAOverlay)
 
@@ -60,7 +60,7 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
 
 @implementation TAOverlay
 
-@synthesize interaction, showBackground, showBlurred, shouldHide, background, window, overlay, spinner, image, label, icon, overlayType, overlaySize, imageArray, iconImage, labelText, customAnimationDuration;
+@synthesize interaction, showBackground, showBlurred, shouldHide, background, window, overlay, spinner, image, label, icon, overlayType, overlaySize, imageArray, iconImage, labelText, customAnimationDuration, swipeUpDownGesture, swipeLeftRightGesture, tapGesture;
 
 + (TAOverlay *)shared
 {
@@ -105,13 +105,16 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
 
 #pragma mark Customization Methods
 
-+ (void)setOverlayBackgroundColor:(UIColor *)backgroundColor {
++ (void)setOverlayBackgroundColor:(UIColor *)color {
     
-    if (backgroundColor != nil)
+    if (color != nil && ![self shared].showBlurred)
     {
-        [self shared].overlayBackgroundColor = backgroundColor;
+        [self shared].overlayBackgroundColor = color;
     }
-    
+    else
+    {
+        [self shared].overlayBackgroundColor = OVERLAY_BACKGROUND_COLOR;
+    }
 }
 
 + (void)setOverlayLabelFont:(UIFont *)font {
@@ -119,6 +122,10 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
     if (font != nil)
     {
         [self shared].overlayFont = font;
+    }
+    else
+    {
+        [self shared].overlayFont = OVERLAY_LABEL_FONT;
     }
 }
 
@@ -128,53 +135,87 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
     {
         [self shared].overlayFontColor = color;
     }
+    else
+    {
+        [self shared].overlayFontColor = OVERLAY_LABEL_COLOR;
+    }
+}
+
++ (void)setOverlayShadowColor:(UIColor *)color {
+    
+    if (color != nil && [self shared].showBackground)
+    {
+        [self shared].overlayShadowColor = color;
+    }
+    else
+    {
+        [self shared].overlayShadowColor = OVERLAY_SHADOW_COLOR;
+    }
 }
 
 - (id)init
 {
 	self = [super initWithFrame:[[UIScreen mainScreen] bounds]];
+    
  	id<UIApplicationDelegate> delegate = [[UIApplication sharedApplication] delegate];
+    
  	if ([delegate respondsToSelector:@selector(window)])
-		window = [delegate performSelector:@selector(window)];
-	else window = [[UIApplication sharedApplication] keyWindow];
-     background = nil; overlay = nil; icon = nil; spinner = nil; image = nil; label = nil;
- 	self.alpha = 0;
+    {
+        window = [delegate performSelector:@selector(window)];
+    }
+	else
+    {
+        window = [[UIApplication sharedApplication] keyWindow];
+    }
+    background            = nil;
+    overlay               = nil;
+    icon                  = nil;
+    spinner               = nil;
+    image                 = nil;
+    label                 = nil;
+    tapGesture            = nil;
+    swipeUpDownGesture    = nil;
+    swipeLeftRightGesture = nil;
+    self.alpha            = 0;
+    
  	return self;
 }
 
 - (void) analyzeOptions:(TAOverlayOptions)options image:(BOOL)hasImage imageArray:(BOOL)hasImageArray {
 
+    self.options = options;
+    
     if (!hasImage && !hasImageArray)
     {
-        if (OptionPresent(options, TAOverlayOptionOverlayTypeSuccess)))
+        if (OptionPresent(options, TAOverlayOptionOverlayTypeSuccess))
         {
             self.overlayType = tOverlayTypeSucess;
         }
-        else if (OptionPresent(options, TAOverlayOptionOverlayTypeActivityDefault)))
+        else if (OptionPresent(options, TAOverlayOptionOverlayTypeActivityDefault))
         {
             self.overlayType = tOverlayTypeActivityDefault;
         }
-        else if (OptionPresent(options, TAOverlayOptionOverlayTypeActivityLeaf)))
+        else if (OptionPresent(options, TAOverlayOptionOverlayTypeActivityLeaf))
         {
             self.overlayType = tOverlayTypeActivityLeaf;
         }
-        else if (OptionPresent(options, TAOverlayOptionOverlayTypeActivityBlur)))
+        else if (OptionPresent(options, TAOverlayOptionOverlayTypeActivityBlur))
         {
             self.overlayType = tOverlayTypeActivityBlur;
         }
-        else if (OptionPresent(options, TAOverlayOptionOverlayTypeActivitySquare)))
+        else if (OptionPresent(options, TAOverlayOptionOverlayTypeActivitySquare))
         {
             self.overlayType = tOverlayTypeActivitySquare;
         }
-        else if (OptionPresent(options, TAOverlayOptionOverlayTypeWarning)))
+        else if (OptionPresent(options, TAOverlayOptionOverlayTypeWarning))
         {
             self.overlayType = tOverlayTypeWarning;
         }
-        else if (OptionPresent(options, TAOverlayOptionOverlayTypeError)))
+        else if (OptionPresent(options, TAOverlayOptionOverlayTypeError))
         {
             self.overlayType = tOverlayTypeError;
         }
-        else if (OptionPresent(options, TAOverlayOptionOverlayTypeInfo)))
+        else if (OptionPresent(options, TAOverlayOptionOverlayTypeInfo))
         {
             self.overlayType = tOverlayTypeInfo;
         }
@@ -192,15 +233,15 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
         self.overlayType = tOverlayTypeImageArray;
     }
 
-    if (OptionPresent(options, TAOverlayOptionOverlaySizeFullScreen)))
+    if (OptionPresent(options, TAOverlayOptionOverlaySizeFullScreen))
     {
         self.overlaySize = tOverlaySizeFullScreen;
     }
-    else if (OptionPresent(options, TAOverlayOptionOverlaySizeBar)))
+    else if (OptionPresent(options, TAOverlayOptionOverlaySizeBar))
     {
         self.overlaySize = tOverlaySizeBar;
     }
-    else if (OptionPresent(options, TAOverlayOptionOverlaySizeRoundedRect)))
+    else if (OptionPresent(options, TAOverlayOptionOverlaySizeRoundedRect))
     {
         self.overlaySize = tOverlaySizeRoundedRect;
     }
@@ -209,7 +250,7 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
         self.overlaySize = tOverlaySizeBar;
     }
     
-    if (OptionPresent(options, TAOverlayOptionOpaqueBackground)))
+    if (OptionPresent(options, TAOverlayOptionOpaqueBackground))
     {
         self.showBlurred = NO;
     }
@@ -218,7 +259,7 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
         self.showBlurred = YES;
     }
     
-    if (OptionPresent(options, TAOverlayOptionOverlayShadow)))
+    if (OptionPresent(options, TAOverlayOptionOverlayShadow))
     {
         self.showBackground = YES;
     }
@@ -227,16 +268,32 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
         self.showBackground = NO;
     }
     
-    if (OptionPresent(options, TAOverlayOptionAllowUserInteraction)))
+    if (OptionPresent(options, TAOverlayOptionAllowUserInteraction))
     {
         self.interaction    = NO;
     }
     else
     {
         self.interaction    = YES;
+        if (OptionPresent(options, TAOverlayOptionOverlayDismissTap))
+        {
+            self.userDismissTap = YES;
+        }
+        else
+        {
+            self.userDismissTap = NO;
+        }
+        if (OptionPresent(options, TAOverlayOptionOverlayDismissSwipeDown) | OptionPresent(options, TAOverlayOptionOverlayDismissSwipeUp) | OptionPresent(options, TAOverlayOptionOverlayDismissSwipeLeft) | OptionPresent(options, TAOverlayOptionOverlayDismissSwipeRight))
+        {
+            self.userDismissSwipe = YES;
+        }
+        else
+        {
+            self.userDismissSwipe = NO;
+        }
     }
     
-    if (OptionPresent(options, TAOverlayOptionAutoHide)))
+    if (OptionPresent(options, TAOverlayOptionAutoHide))
     {
         self.shouldHide = YES;
     }
@@ -252,10 +309,22 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
 
 - (void) setProperties {
     
-    self.overlayFont            = OVERLAY_LABEL_FONT;
-    self.overlayFontColor       = OVERLAY_LABEL_COLOR;
-    self.overlayBackgroundColor = OVERLAY_BACKGROUND_COLOR;
-
+    if (_overlayFont == nil)
+    {
+        _overlayFont = OVERLAY_LABEL_FONT;
+    }
+    if (_overlayFontColor == nil)
+    {
+        _overlayFontColor = OVERLAY_LABEL_COLOR;
+    }
+    if (_overlayBackgroundColor == nil)
+    {
+        _overlayBackgroundColor = OVERLAY_BACKGROUND_COLOR;
+    }
+    if (_overlayShadowColor == nil)
+    {
+        _overlayShadowColor = OVERLAY_SHADOW_COLOR;
+    }
 }
 
 - (void)overlayMake:(NSString *)status
@@ -372,19 +441,21 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
     background.userInteractionEnabled = interaction;
     
     if (showBackground) {
-        background.backgroundColor = OVERLAY_SHADOW_COLOR;
+        background.backgroundColor = _overlayShadowColor;
     } else {
         background.backgroundColor = [UIColor clearColor];
     }
+    
     if (!showBlurred) {
         overlay.translucent = NO;
         overlay.backgroundColor = [UIColor clearColor];
-        overlay.barTintColor = self.overlayBackgroundColor;
+        overlay.barTintColor = _overlayBackgroundColor;
     } else {
         overlay.translucent = YES;
         overlay.barTintColor = nil;
         overlay.backgroundColor = OVERLAY_BLUR_TINT_COLOR;
     }
+    
 	[self overlayDimensionsWithNotification:nil];
 	[self overlayShow];
  	if (shouldHide) [NSThread detachNewThreadSelector:@selector(autoHide) toTarget:self withObject:nil];
@@ -406,7 +477,7 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
 		{
 			background = [[UIView alloc] initWithFrame:window.frame];
             if (showBackground) {
-                background.backgroundColor = OVERLAY_SHADOW_COLOR;
+                background.backgroundColor = _overlayShadowColor;
             } else {
                 background.backgroundColor = [UIColor clearColor];
             }
@@ -415,8 +486,47 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
 			[background addSubview:overlay];
 		}
 		else [window addSubview:overlay];
+        
+        if (tapGesture == nil && self.userDismissTap)
+        {
+            tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+            [window addGestureRecognizer:tapGesture];
+        }
+        
+        if (self.userDismissSwipe)
+        {
+            if (swipeUpDownGesture == nil && (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeUp) | OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeDown)))
+            {
+                swipeUpDownGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+            
+                if (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeUp))
+                {
+                    swipeUpDownGesture.direction = UISwipeGestureRecognizerDirectionUp;
+                }
+                if (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeDown))
+                {
+                    swipeUpDownGesture.direction = (swipeUpDownGesture.direction | UISwipeGestureRecognizerDirectionDown);
+                }
+                
+                [window addGestureRecognizer:swipeUpDownGesture];
+            }
+            if (swipeLeftRightGesture == nil && (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeLeft) | OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeRight)))
+            {
+                swipeLeftRightGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+                
+                if (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeLeft))
+                {
+                    swipeLeftRightGesture.direction = UISwipeGestureRecognizerDirectionLeft;
+                }
+                if (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeRight))
+                {
+                    swipeLeftRightGesture.direction = (swipeLeftRightGesture.direction | UISwipeGestureRecognizerDirectionRight);
+                }
+                
+                [window addGestureRecognizer:swipeLeftRightGesture];
+            }
+        }
 	}
-     
  	if (spinner == nil)
 	{
 		spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
@@ -444,8 +554,8 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
  	if (label == nil)
 	{
 		label = [[UILabel alloc] initWithFrame:CGRectZero];
-		label.font = self.overlayFont;
-		label.textColor = self.overlayFontColor;
+		label.font = _overlayFont;
+		label.textColor = _overlayFontColor;
 		label.backgroundColor = [UIColor clearColor];
 		label.textAlignment = NSTextAlignmentCenter;
 		label.baselineAdjustment = UIBaselineAdjustmentAlignCenters;
@@ -467,6 +577,18 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
 - (void)overlayDestroy
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
+    if (self.tapGesture)
+    {
+        [window removeGestureRecognizer:tapGesture]; tapGesture = nil;
+    }
+    if (self.swipeUpDownGesture)
+    {
+        [window removeGestureRecognizer:swipeUpDownGesture]; swipeUpDownGesture = nil;
+    }
+    if (self.swipeLeftRightGesture)
+    {
+        [window removeGestureRecognizer:swipeLeftRightGesture]; swipeLeftRightGesture = nil;
+    }
  	[label removeFromSuperview];		label = nil;
 	[image removeFromSuperview];		image = nil;
 	[spinner removeFromSuperview];		spinner = nil;
@@ -645,6 +767,8 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
 {
 	if (self.alpha == 1)
 	{
+        self.willHide = YES;
+        
         NSDictionary *userInfo = [self getUserInfo];
         [[NSNotificationCenter defaultCenter] postNotificationName:TAOverlayWillDisappearNotification
                                                             object:nil
@@ -672,14 +796,37 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
 {
 	@autoreleasepool
 	{
+        self.willHide = NO;
+
 		double length = label.text.length;
 		NSTimeInterval sleep = length * 0.04 + 0.8;
 		[NSThread sleepForTimeInterval:sleep];
 
 		dispatch_async(dispatch_get_main_queue(), ^{
-			[self overlayHide];
+            if (!self.willHide)
+            {
+                [self overlayHide];
+            }
 		});
 	}
+}
+
+#pragma mark Gesture Handlers
+
+- (void) handleTap:(UITapGestureRecognizer *)gesture {
+    
+    if (self.userDismissTap)
+    {
+        [self overlayHide];
+    }
+}
+
+- (void) handleSwipe:(UISwipeGestureRecognizer *)gesture {
+    
+    if (self.userDismissSwipe)
+    {
+        [self overlayHide];
+    }
 }
 
 #pragma mark Property Methods
@@ -688,16 +835,17 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
     
     if (overlayBackgroundColor != nil)
     {
-        overlay.barTintColor = overlayBackgroundColor;
+        _overlayBackgroundColor = overlayBackgroundColor;
+        overlay.barTintColor = _overlayBackgroundColor;
     }
-    
 }
 
 - (void)setOverlayFont:(UIFont *)overlayFont {
     
     if (overlayFont != nil)
     {
-        label.font = overlayFont;
+        _overlayFont = overlayFont;
+        label.font = _overlayFont;
         [self overlayDimensionsWithNotification:nil];
     }
 }
@@ -706,7 +854,16 @@ NSString * const TAOverlayLabelTextUserInfoKey = @"TAOverlayLabelTextUserInfoKey
     
     if (overlayFontColor != nil)
     {
-        label.textColor = overlayFontColor;
+        _overlayFontColor = overlayFontColor;
+        label.textColor = _overlayFontColor;
+    }
+}
+
+- (void)setOverlayShadowColor:(UIColor *)overlayShadowColor {
+    
+    if (overlayShadowColor != nil) {
+        _overlayShadowColor = overlayShadowColor;
+        self.background.backgroundColor = _overlayShadowColor;
     }
 }
 

@@ -113,7 +113,7 @@
 /**
  * Check if given option is present.
  */
-#define OptionPresent(options, value) (((options & (value)) == (value))
+#define OptionPresent(options, value) ((options & (value)) == (value))
 
 /**
  * get point with an offset.
@@ -189,7 +189,15 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 
     TAOverlayOptionOverlaySizeFullScreen      = 1 << 12,    // Show fullscreen overlay
     TAOverlayOptionOverlaySizeBar             = 1 << 13,    // Show bar overlay
-    TAOverlayOptionOverlaySizeRoundedRect     = 1 << 14     // Show standard rounded rectangle overlay
+    TAOverlayOptionOverlaySizeRoundedRect     = 1 << 14,    // Show standard rounded rectangle overlay
+    
+    // Following active only if option TAOverlayOptionAllowUserInteraction not present
+    
+    TAOverlayOptionOverlayDismissTap          = 1 << 15,    // Allow dismissal via tap gesture
+    TAOverlayOptionOverlayDismissSwipeUp      = 1 << 16,    // Allow dismissal via swipe up gesture
+    TAOverlayOptionOverlayDismissSwipeDown    = 1 << 17,    // Allow dismissal via swipe down gesture
+    TAOverlayOptionOverlayDismissSwipeLeft    = 1 << 18,    // Allow dismissal via swipe left gesture
+    TAOverlayOptionOverlayDismissSwipeRight   = 1 << 19     // Allow dismissal via swipe right gesture
 };
 
 
@@ -258,7 +266,7 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
  *
  * @param backgroundColor The color to set as the overlay background color.
  */
-+ (void)setOverlayBackgroundColor:(UIColor *)backgroundColor;
++ (void)setOverlayBackgroundColor:(UIColor *)color;
 
 /**
  * Changes the overlay label font to the specified font.
@@ -274,6 +282,13 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
  */
 + (void)setOverlayLabelTextColor:(UIColor *)color;
 
+/**
+ * Changes the overlay shadow color to the specified color.
+ *
+ * @param color The color to set as the overlay shadow color.
+ */
++ (void)setOverlayShadowColor:(UIColor *)color;
+
 #pragma mark Properties
 
 /** A boolean value indicating if the overlay allows user interaction. */
@@ -287,6 +302,15 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 
 /** A boolean value indicating if the overlay auto hides. */
 @property (nonatomic, assign) BOOL shouldHide;
+
+/** A boolean value indicating if the overlay will hide. Used to control auto hide feature */
+@property (nonatomic, assign) BOOL willHide;
+
+/** A boolean value indicating if the overlay is user dismissible by tap gesture. */
+@property (nonatomic, assign) BOOL userDismissTap;
+
+/** A boolean value indicating if the overlay is user dismissible by swipe gesture. */
+@property (nonatomic, assign) BOOL userDismissSwipe;
 
 /** The current application window. */
 @property (nonatomic, retain) UIWindow                 *window;
@@ -315,6 +339,9 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 /** The background color of the overlay */
 @property (nonatomic, strong) UIColor                  *overlayBackgroundColor;
 
+/** The shadow color of the overlay */
+@property (nonatomic, strong) UIColor                  *overlayShadowColor;
+
 /** The font color of the overlay */
 @property (nonatomic, strong) UIColor                  *overlayFontColor;
 
@@ -329,6 +356,18 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 
 /** The animation duration of custom array. */
 @property (nonatomic) CGFloat                          customAnimationDuration;
+
+/** Gesture recognizer for tap gestures. */
+@property (nonatomic, strong) UITapGestureRecognizer   *tapGesture;
+
+/** Gesture recognizer for swipe up/down gestures. */
+@property (nonatomic, strong) UISwipeGestureRecognizer *swipeUpDownGesture;
+
+/** Gesture recognizer for swipe left/right gestures. */
+@property (nonatomic, strong) UISwipeGestureRecognizer *swipeLeftRightGesture;
+
+/** The options for the current overlay. */
+@property (nonatomic) TAOverlayOptions  options;
 
 /** The type of current overlay. */
 @property (nonatomic) TOverlayType  overlayType;
