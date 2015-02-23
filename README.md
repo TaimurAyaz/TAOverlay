@@ -23,7 +23,7 @@
 
 Add the following to your **podfile**
 ```
-pod 'TAOverlay', '~> 1.3'
+pod 'TAOverlay', '~> 1.5'
 ```
 ### Manual
 
@@ -68,28 +68,6 @@ You can hide the **TAOverlay** using:
 ```
 + (void) hideOverlay;
 ```
-
-### Customizing TAOverlay
-
-You can customize the **TAOverlay** using one of the following:
-
-```
-+ (void)setOverlayBackgroundColor:(UIColor *)backgroundColor;
-```
-* The `backgroundColor` parameter is the color you want to set as the overlay background color.
-
-```
-+ (void)setOverlayLabelFont:(UIFont *)font;
-```
-* The `font` parameter is the font you want to set as the overlay label font.
-
-```
-+ (void)setOverlayLabelTextColor:(UIColor *)color;
-```
-* The `backgroundColor` parameter is the color you want to set as the overlay label text color.
-
-*( More static customization optons below )*
-
 ### Example
 
 ```
@@ -111,6 +89,33 @@ The above shows the **TAOverlay** with the following properties:
 
 **TAOverlay** has a lot of customization options. 
 
+### Customization methods
+
+You can customize the **TAOverlay** using one of the following:
+
+```
++ (void)setOverlayBackgroundColor:(UIColor *)color;
+```
+* The `color` parameter is the color you want to set as the overlay background color.
+
+```
++ (void)setOverlayLabelFont:(UIFont *)font;
+```
+* The `font` parameter is the font you want to set as the overlay label font.
+
+```
++ (void)setOverlayLabelTextColor:(UIColor *)color;
+```
+* The `color` parameter is the color you want to set as the overlay label text color.
+
+```
++ (void)setOverlayShadowColor:(UIColor *)color;
+```
+* The `color` parameter is the color you want to set as the overlay shadow color.
+
+
+
+
 ### TAOverlayOptions  
 
 **TAOverlayOptions** defines the following set of bitmasks that can be used to fine tune the appearence of the overlay:  
@@ -119,25 +124,51 @@ The above shows the **TAOverlay** with the following properties:
 **Appearence options**
 
 * `TAOverlayOptionOpaqueBackground` option indicates that the overlay does not have a blur effect, rather, a solid background
+
 * `TAOverlayOptionOverlayShadow` options indicates that the overlay has a semi-transparent shadow over the whole screen behind it
-* `TAOverlayOptionAllowUserInteraction` option indicates that the user can interact with objects behind the overlay
+
 * `TAOverlayOptionAutoHide` option indicates that the overlay auto hides after a certain time, based on the length of the status string 
+
+**Interaction options**
+
+* `TAOverlayOptionAllowUserInteraction` option indicates that the user can interact with objects behind the overlay
+
+If the above option is **not present**, the folowing options establish how the user dismisses the overlay:
+
+*  `TAOverlayOptionOverlayDismissTap` option lets the user dismiss the overlay with a tap gesture
+
+*  `TAOverlayOptionOverlayDismissSwipeUp` option lets the user dismiss the overlay by swiping up
+
+*  `TAOverlayOptionOverlayDismissSwipeDown` option lets the user dismiss the overlay by swiping down
+
+*  `TAOverlayOptionOverlayDismissSwipeLeft` option lets the user dismiss the overlay by swiping left 
+
+*  `TAOverlayOptionOverlayDismissSwipeRight` option lets the user dismiss the overlay by swiping right
 
 **Type options**
 
 * `TAOverlayOptionOverlayTypeActivityDefault` option indicates that the overlay shows ongoing activity using the default iOS Activity Indicator
+
 * `TAOverlayOptionOverlayTypeActivityLeaf` options indicates that the overlay shows ongoing activity using a custom activity indicator of the style of a leaf ***Default option***
+
 * `TAOverlayOptionOverlayTypeActivityBlur` option indicates that the overlay shows ongoing activity using a custom activity indicator of the style of a blurred halo
+
 * `TAOverlayOptionOverlayTypeActivitySquare` option indicates that the overlay shows ongoing activity using a custom activity indicator of the style of a rounded rectangle
+
 * `TAOverlayOptionOverlayTypeSuccess` option indicates that the overlay shows a check mark inside a circle, signifying, successful completion of a task
+
 * `TAOverlayOptionOverlayTypeWarning` option indicates that the overlay shows an exclamation mark inside a circle, warning the user of something
+
 * `TAOverlayOptionOverlayTypeError` option indicates that the overlay shows a cross mark inside a circle, signifying, an un-successful event
+
 * `TAOverlayOptionOverlayTypeInfo` option indicates that the overlay shows an information mark inside a circle, informing the user of something
 
 **Size options**
 
 * `TAOverlayOptionOverlaySizeFullScreen` option indicates that the overlay fills the whole screen
+
 * `TAOverlayOptionOverlaySizeBar` options indicates that the overlay takes a bar like shape ***Default option***
+
 * `TAOverlayOptionOverlaySizeRoundedRect` option indicates that the overlay takes a rounded rect shape
 
 ### Definitions
@@ -145,19 +176,33 @@ The above shows the **TAOverlay** with the following properties:
 The header file includes the following definitions to tweak the appearence of the overlay:
 
 * `OVERLAY_LABEL_FONT` The **font** of the status label
+
 * `OVERLAY_LABEL_COLOR` The **text color** of the status label
+
 * `OVERLAY_ACTIVITY_DEFAULT_COLOR` The **color** of the default type activity indicator
+
 * `OVERLAY_ACTIVITY_LEAF_COLOR` The **color** of the leaf type activity indicator
+
 * `OVERLAY_ACTIVITY_BLUR_COLOR` The **color** of the blur type activity indicator
+
 * `OVERLAY_ACTIVITY_SQUARE_COLOR` The **color** of the square type activity indicator
+
 * `OVERLAY_SHADOW_COLOR` The **color** of the semi-transparent shadow behind the overlay
+
 * `OVERLAY_BACKGROUND_COLOR` The **color** of the background of the overlay
+
 * `OVERLAY_BLUR_TINT_COLOR` The **tint color** of the blur of the overlay
+
 * `OVERLAY_SUCCESS_COLOR` The **color** of the success icon
+
 * `OVERLAY_WARNING_COLOR` The **color** of the warning icon
+
 * `OVERLAY_ERROR_COLOR` The **color** of the error icon
+
 * `OVERLAY_INFO_COLOR` The **color** of the information icon
+
 * `OVERLAY_ICON_THICKNESS` The **thickness** of success, warning, error and information icons
+
 * `ANIMATION_DURATION` The **animation duration** of the appearence and disappearence animations
 
 
@@ -177,8 +222,11 @@ Custom images can be shown using the latter of the "show" methods described abov
 **TAOverlay** posts the following notifications via `NSNotificationCenter` in response to being shown/dismissed:
 
 * `TAOverlayWillAppearNotification` when the show animation starts.
+
 * `TAOverlayDidAppearNotification` when the show animation completes.
+
 * `TAOverlayWillDisappearNotification` when the dismiss animation starts.
+
 * `TAOverlayDidDisappearNotification` when the dismiss animation completes.
 
 Each notification passes a `userInfo` dictionary holding the Overlay's status string (if any), retrievable via `TAOverlayStatusUserInfoKey`.
