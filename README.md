@@ -23,11 +23,7 @@
 
 Add the following to your **podfile**
 ```
-<<<<<<< HEAD
 pod 'TAOverlay', '~> 1.5'
-=======
-pod 'TAOverlay', '~> 1.4'
->>>>>>> FETCH_HEAD
 ```
 ### Manual
 
