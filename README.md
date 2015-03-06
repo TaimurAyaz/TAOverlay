@@ -15,7 +15,7 @@
 * Added completion block support on overlay hide
 * Enhanced hide methods
 * Added progress indicator overlay type
-* Add more customization methods
+* Added more customization methods
 * Bug fixes
 
 ## Requirements
