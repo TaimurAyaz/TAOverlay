@@ -10,6 +10,14 @@
 
 ![TAOverlay](https://raw.githubusercontent.com/TaimurAyaz/TAOverlay/master/screenshot.png)
 
+## What's new in v2.0
+
+* Added completion block support on overlay hide
+* Enhanced hide methods
+* Added progress indicator overlay type
+* Add more customization methods
+* Bug fixes
+
 ## Requirements
 
 * iOS 7.0+
@@ -68,6 +76,19 @@ You can hide the **TAOverlay** using:
 ```
 + (void) hideOverlay;
 ```
+* Hides the currently shown overlay
+
+```
++ (void) hideOverlayWithCompletion;
+```
+* Hides the currently shown overlay and runs a **set** block of code
+
+```
++ (void)hideOverlayWithCompletionBlock:(void (^)(BOOL finished))completionBlock;
+```
+* Hides the currently shown overlay and runs a given block of code
+* The `completionBlock` parameter is the block of code you want to run after the overlay hides
+
 ### Example
 
 ```
@@ -96,25 +117,47 @@ You can customize the **TAOverlay** using one of the following:
 ```
 + (void)setOverlayBackgroundColor:(UIColor *)color;
 ```
-* The `color` parameter is the color you want to set as the overlay background color.
+* The `color` parameter is the color you want to set as the overlay background color
 
 ```
 + (void)setOverlayLabelFont:(UIFont *)font;
 ```
-* The `font` parameter is the font you want to set as the overlay label font.
+* The `font` parameter is the font you want to set as the overlay label font
 
 ```
 + (void)setOverlayLabelTextColor:(UIColor *)color;
 ```
-* The `color` parameter is the color you want to set as the overlay label text color.
+* The `color` parameter is the color you want to set as the overlay label text color
 
 ```
 + (void)setOverlayShadowColor:(UIColor *)color;
 ```
-* The `color` parameter is the color you want to set as the overlay shadow color.
+* The `color` parameter is the color you want to set as the overlay shadow color
 
+```
+ (void)setOverlayLabelText:(NSString *)text;
+```
+* The `text` parameter is the text you want to set as the overlay label text
 
+```
++ (void)setOverlayIconColor:(UIColor *)color;
+```
+* The `color` parameter is the color you want to set as the overlay sucess, failure, info and warning icon color
 
+```
++ (void)setOverlayProgressColor:(UIColor *)color;
+```
+* The `color` parameter is the color you want to set as the overlay progress indicator color
+
+```
++ (void)setOverlayProgress:(CGFloat)overlayProgress;
+```
+* The `overlayProgress` parameter is the overlay progress you want to set for the overlay progress indicator. The value must be between 0.0 to 1.0. Default is 0.0.
+
+```
++ (void)setCompletionBlock:(void (^)(BOOL))completionBlock;
+```
+* The `completionBlock` parameter is the block of code you want to run after the overlay hides
 
 ### TAOverlayOptions  
 
@@ -149,7 +192,7 @@ If the above option is **not present**, the folowing options establish how the u
 
 * `TAOverlayOptionOverlayTypeActivityDefault` option indicates that the overlay shows ongoing activity using the default iOS Activity Indicator
 
-* `TAOverlayOptionOverlayTypeActivityLeaf` options indicates that the overlay shows ongoing activity using a custom activity indicator of the style of a leaf ***Default option***
+* `TAOverlayOptionOverlayTypeActivityLeaf` options indicates that the overlay shows ongoing activity using a custom activity indicator of the style of a leaf - ***Default option***
 
 * `TAOverlayOptionOverlayTypeActivityBlur` option indicates that the overlay shows ongoing activity using a custom activity indicator of the style of a blurred halo
 
@@ -162,6 +205,11 @@ If the above option is **not present**, the folowing options establish how the u
 * `TAOverlayOptionOverlayTypeError` option indicates that the overlay shows a cross mark inside a circle, signifying, an un-successful event
 
 * `TAOverlayOptionOverlayTypeInfo` option indicates that the overlay shows an information mark inside a circle, informing the user of something
+
+* `TAOverlayOptionOverlayTypeProgress` option indicates that the overlay shows a progress indicator - ***Progress handler methods available***
+
+* `TAOverlayOptionOverlayTypeText` option indicates that the overlay just shows text 
+
 
 **Size options**
 
@@ -201,6 +249,8 @@ The header file includes the following definitions to tweak the appearence of th
 
 * `OVERLAY_INFO_COLOR` The **color** of the information icon
 
+* `OVERLAY_PROGRESS_COLOR` The **progress fill color** of the progress indicator, if one is shown. 
+
 * `OVERLAY_ICON_THICKNESS` The **thickness** of success, warning, error and information icons
 
 * `ANIMATION_DURATION` The **animation duration** of the appearence and disappearence animations
@@ -219,7 +269,7 @@ Custom images can be shown using the latter of the "show" methods described abov
 
 ## Notifications
 
-**TAOverlay** posts the following notifications via `NSNotificationCenter` in response to being shown/dismissed:
+**TAOverlay** posts the following notifications via `NSNotificationCenter`:
 
 * `TAOverlayWillAppearNotification` when the show animation starts.
 
@@ -229,11 +279,12 @@ Custom images can be shown using the latter of the "show" methods described abov
 
 * `TAOverlayDidDisappearNotification` when the dismiss animation completes.
 
+* `TAOverlayProgressCompletedNotification` when a progress type overlay, completes the progress indicator.
+
 Each notification passes a `userInfo` dictionary holding the Overlay's status string (if any), retrievable via `TAOverlayStatusUserInfoKey`.
 
 ## ToDo
 
-* Add progress indicator
 * Enhance overlay to more than just providing information
 
 ## Contributing to this project

@@ -23,7 +23,7 @@
 /**
  * Text color for overlay status.
  */
-#define OVERLAY_LABEL_COLOR            [UIColor blackColor]
+#define OVERLAY_LABEL_COLOR             [UIColor blackColor]
 
 /**
  * Fill color for activity default icon.
@@ -79,6 +79,11 @@
  * Fill color for information icon.
  */
 #define OVERLAY_INFO_COLOR              [UIColor colorWithRed:102.0/255.0 green:204.0/255.0 blue:255.0/255.0 alpha:1.0]
+
+/**
+ * Fill color for progress indicator.
+ */
+#define OVERLAY_PROGRESS_COLOR          [UIColor colorWithRed:102.0/255.0 green:204.0/255.0 blue:255.0/255.0 alpha:1.0]
 
 /**
  * Thickness of success, error, warning and info icons.
@@ -142,6 +147,7 @@ extern NSString * const TAOverlayWillDisappearNotification;
 extern NSString * const TAOverlayDidDisappearNotification;
 extern NSString * const TAOverlayWillAppearNotification;
 extern NSString * const TAOverlayDidAppearNotification;
+extern NSString * const TAOverlayProgressCompletedNotification;
 
 /** TAOverlay user info key. Notifications can provide current status, if not 'nil'. */
 extern NSString * const TAOverlayLabelTextUserInfoKey;
@@ -157,6 +163,8 @@ typedef NS_ENUM(NSInteger, TOverlayType)
     tOverlayTypeError,
     tOverlayTypeWarning,
     tOverlayTypeInfo,
+    tOverlayTypeProgress,
+    tOverlayTypeText,
     tOverlayTypeImage,
     tOverlayTypeImageArray
 };
@@ -186,18 +194,25 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
     TAOverlayOptionOverlayTypeWarning         = 1 << 9,     // Show warning
     TAOverlayOptionOverlayTypeError           = 1 << 10,    // Show error
     TAOverlayOptionOverlayTypeInfo            = 1 << 11,    // Show info
+    TAOverlayOptionOverlayTypeProgress        = 1 << 12,    // Show Progress
+    TAOverlayOptionOverlayTypeText            = 1 << 13,    // Show Only Text
 
-    TAOverlayOptionOverlaySizeFullScreen      = 1 << 12,    // Show fullscreen overlay
-    TAOverlayOptionOverlaySizeBar             = 1 << 13,    // Show bar overlay
-    TAOverlayOptionOverlaySizeRoundedRect     = 1 << 14,    // Show standard rounded rectangle overlay
+    TAOverlayOptionOverlaySizeFullScreen      = 1 << 14,    // Show fullscreen overlay
+    TAOverlayOptionOverlaySizeBar             = 1 << 15,    // Show bar overlay
+    TAOverlayOptionOverlaySizeRoundedRect     = 1 << 16,    // Show standard rounded rectangle overlay
     
     // Following active only if option TAOverlayOptionAllowUserInteraction not present
     
-    TAOverlayOptionOverlayDismissTap          = 1 << 15,    // Allow dismissal via tap gesture
-    TAOverlayOptionOverlayDismissSwipeUp      = 1 << 16,    // Allow dismissal via swipe up gesture
-    TAOverlayOptionOverlayDismissSwipeDown    = 1 << 17,    // Allow dismissal via swipe down gesture
-    TAOverlayOptionOverlayDismissSwipeLeft    = 1 << 18,    // Allow dismissal via swipe left gesture
-    TAOverlayOptionOverlayDismissSwipeRight   = 1 << 19     // Allow dismissal via swipe right gesture
+    TAOverlayOptionOverlayDismissTap          = 1 << 17,    // Allow dismissal via tap gesture
+    TAOverlayOptionOverlayDismissSwipeUp      = 1 << 18,    // Allow dismissal via swipe up gesture
+    TAOverlayOptionOverlayDismissSwipeDown    = 1 << 19,    // Allow dismissal via swipe down gesture
+    TAOverlayOptionOverlayDismissSwipeLeft    = 1 << 20,    // Allow dismissal via swipe left gesture
+    TAOverlayOptionOverlayDismissSwipeRight   = 1 << 21,    // Allow dismissal via swipe right gesture
+    
+    
+    // Following are experimental options
+    
+    TAOverlayOptionOverlayAnimateTransistions = 1 << 22,    // Allow animated transitions (EXPERIMENTAL)
 };
 
 
@@ -228,11 +243,6 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 #pragma mark Show/Hide Methods
 
 /**
- *  hides currently shown overlay.
- */
-+ (void) hideOverlay;
-
-/**
  * Shows an overlay with a label and a predefined icon.
  *
  * @param status The text to display on the overlay. If the value is 'nil', overlay is shown without a label.
@@ -259,6 +269,24 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
  */
 + (void) showOverlayWithLabel:(NSString *)status ImageArray:(NSArray *)imageArray Duration:(CGFloat)duration Options:(TAOverlayOptions)options;
 
+/**
+ *  Hides currently shown overlay.
+ */
++ (void) hideOverlay;
+
+/**
+ * Hides currently shown overlay and runs a set block of code.
+ */
++ (void)hideOverlayWithCompletion;
+
+/**
+ * Hides currently shown overlay and runs a given block of code.
+ *
+ * @param completionBlock The block of code to run on sucessful quit of the overlay.
+ */
++ (void)hideOverlayWithCompletionBlock:(void (^)(BOOL finished))completionBlock;
+
+
 #pragma mark Customization Methods
 
 /**
@@ -283,34 +311,51 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 + (void)setOverlayLabelTextColor:(UIColor *)color;
 
 /**
+ * Changes the overlay label text to the specified text.
+ *
+ * @param text The text to set as the overlay label text.
+ */
++ (void)setOverlayLabelText:(NSString *)text;
+
+/**
  * Changes the overlay shadow color to the specified color.
  *
  * @param color The color to set as the overlay shadow color.
  */
 + (void)setOverlayShadowColor:(UIColor *)color;
 
+/**
+ * Changes the overlay icon color to the specified color.
+ *
+ * @param color The color to set as the overlay icon color.
+ */
++ (void)setOverlayIconColor:(UIColor *)color;
+
+/**
+ * Sets the progess value for the overlay, if a progress overlay is shown.
+ *
+ * @param progress The value to set as progress value for the overlay.
+ */
++ (void)setOverlayProgress:(CGFloat)overlayProgress;
+
+/**
+ * Changes the overlay progress bar color to the specified color.
+ *
+ * @param color The color to set as the overlay progress bar color.
+ */
++ (void)setOverlayProgressColor:(UIColor *)color;
+
+/**
+ * Sets the completion block for the overlay.
+ *
+ * @param completionBlock The block of code to run on sucessful quit of the overlay.
+ */
++ (void)setCompletionBlock:(void (^)(BOOL))completionBlock;
+
 #pragma mark Properties
 
-/** A boolean value indicating if the overlay allows user interaction. */
-@property (nonatomic, assign) BOOL interaction;
-
-/** A boolean value indicating if the overlay shows a shadow background. */
-@property (nonatomic, assign) BOOL showBackground;
-
-/** A boolean value indicating if the overlay's background is blurred. */
-@property (nonatomic, assign) BOOL showBlurred;
-
-/** A boolean value indicating if the overlay auto hides. */
-@property (nonatomic, assign) BOOL shouldHide;
-
-/** A boolean value indicating if the overlay will hide. Used to control auto hide feature */
-@property (nonatomic, assign) BOOL willHide;
-
-/** A boolean value indicating if the overlay is user dismissible by tap gesture. */
-@property (nonatomic, assign) BOOL userDismissTap;
-
-/** A boolean value indicating if the overlay is user dismissible by swipe gesture. */
-@property (nonatomic, assign) BOOL userDismissSwipe;
+/** Property for the completion block. */
+@property (nonatomic, copy) void (^completionBlock)(BOOL finished);
 
 /** The current application window. */
 @property (nonatomic, retain) UIWindow                 *window;
@@ -345,26 +390,23 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 /** The font color of the overlay */
 @property (nonatomic, strong) UIColor                  *overlayFontColor;
 
+/** The icon color of the overlay */
+@property (nonatomic, strong) UIColor                  *overlayIconColor;
+
+/** The progress bar color of the overlay */
+@property (nonatomic, strong) UIColor                  *overlayProgressColor;
+
 /** An array of images for use as a custom activity indicator. */
 @property (nonatomic, strong) NSArray                  *imageArray;
 
 /** The current label text. */
-@property (nonatomic, strong) NSString                 *labelText;
+@property (nonatomic, strong) NSString                 *overlayText;
 
 /** The current icon image. */
 @property (nonatomic, strong) UIImage                  *iconImage;
 
 /** The animation duration of custom array. */
-@property (nonatomic) CGFloat                          customAnimationDuration;
-
-/** Gesture recognizer for tap gestures. */
-@property (nonatomic, strong) UITapGestureRecognizer   *tapGesture;
-
-/** Gesture recognizer for swipe up/down gestures. */
-@property (nonatomic, strong) UISwipeGestureRecognizer *swipeUpDownGesture;
-
-/** Gesture recognizer for swipe left/right gestures. */
-@property (nonatomic, strong) UISwipeGestureRecognizer *swipeLeftRightGesture;
+@property (nonatomic) CGFloat                          overlayProgress;
 
 /** The options for the current overlay. */
 @property (nonatomic) TAOverlayOptions  options;
@@ -374,5 +416,7 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 
 /** The size of current overlay. */
 @property (nonatomic) TOverlaySize  overlaySize;
+
+
 
 @end

@@ -17,12 +17,13 @@
 
 #import "TAOverlay.h"
 
-NSString * const TAOverlayWillDisappearNotification = @"TAOverlayWillDisappearNotification";
-NSString * const TAOverlayDidDisappearNotification  = @"TAOverlayDidDisappearNotification";
-NSString * const TAOverlayWillAppearNotification    = @"TAOverlayWillAppearNotification";
-NSString * const TAOverlayDidAppearNotification     = @"TAOverlayDidAppearNotification";
+NSString * const TAOverlayWillDisappearNotification     = @"TAOverlayWillDisappearNotification";
+NSString * const TAOverlayDidDisappearNotification      = @"TAOverlayDidDisappearNotification";
+NSString * const TAOverlayWillAppearNotification        = @"TAOverlayWillAppearNotification";
+NSString * const TAOverlayDidAppearNotification         = @"TAOverlayDidAppearNotification";
+NSString * const TAOverlayProgressCompletedNotification = @"TAOverlayProgressCompletedNotification";
 
-NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserInfoKey";
+NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUserInfoKey";
 
 #pragma mark UIImage Category Implementation
 
@@ -55,12 +56,59 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
 
 @end
 
+#pragma mark TAOverlay interface extension
+
+@interface TAOverlay ()
+
+/** A boolean value indicating if the overlay allows user interaction. */
+@property (nonatomic, assign) BOOL interaction;
+
+/** A boolean value indicating if the overlay shows a shadow background. */
+@property (nonatomic, assign) BOOL showBackground;
+
+/** A boolean value indicating if the overlay's background is blurred. */
+@property (nonatomic, assign) BOOL showBlurred;
+
+/** A boolean value indicating if the overlay auto hides. */
+@property (nonatomic, assign) BOOL shouldHide;
+
+/** A boolean value indicating if the overlay will hide. Used to control auto hide feature */
+@property (nonatomic, assign) BOOL willHide;
+
+/** A boolean value indicating if the overlay is user dismissible by tap gesture. */
+@property (nonatomic, assign) BOOL userDismissTap;
+
+/** A boolean value indicating if the overlay is user dismissible by swipe gesture. */
+@property (nonatomic, assign) BOOL userDismissSwipe;
+
+/** A boolean value indicating if the user set a custom icon color. */
+@property (nonatomic, assign) BOOL didSetOverlayIconColor;
+
+/** A boolean value indicating if the user set a custom text. */
+@property (nonatomic, assign) BOOL didSetOverlayLabelText;
+
+/** A boolean value indicating if the user set a custom font. */
+@property (nonatomic, assign) BOOL didSetOverlayLabelFont;
+
+/** The animation duration of custom array. */
+@property (nonatomic) CGFloat                          customAnimationDuration;
+
+/** Gesture recognizer for tap gestures. */
+@property (nonatomic, strong) UITapGestureRecognizer   *tapGesture;
+
+/** Gesture recognizer for swipe up/down gestures. */
+@property (nonatomic, strong) UISwipeGestureRecognizer *swipeUpDownGesture;
+
+/** Gesture recognizer for swipe left/right gestures. */
+@property (nonatomic, strong) UISwipeGestureRecognizer *swipeLeftRightGesture;
+
+@end
 
 #pragma mark TAOverlay Implementation
 
 @implementation TAOverlay
 
-@synthesize interaction, showBackground, showBlurred, shouldHide, background, window, overlay, spinner, image, label, icon, overlayType, overlaySize, imageArray, iconImage, labelText, customAnimationDuration, swipeUpDownGesture, swipeLeftRightGesture, tapGesture;
+@synthesize interaction, showBackground, showBlurred, shouldHide, background, window, overlay, spinner, image, label, icon, overlayType, overlaySize, imageArray, iconImage, customAnimationDuration, swipeUpDownGesture, swipeLeftRightGesture, tapGesture;
 
 + (TAOverlay *)shared
 {
@@ -72,42 +120,65 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
 
 #pragma mark Show/Hide Methods
 
-+ (void)hideOverlay
-{
-	[[self shared] overlayHide];
-}
-
-+ (void)showOverlayWithLabel:(NSString *)status Options:(TAOverlayOptions)options {
++ (void)showOverlayWithLabel:(NSString *)status Options:(TAOverlayOptions)options{
     
-    [self shared].labelText  = status;
+    [self shared].didSetOverlayLabelFont = NO;
+    [self shared].didSetOverlayLabelText = NO;
+    [self shared].overlayText            = status;
     [[self shared] analyzeOptions:options image:NO imageArray:NO];
 
 }
 
-+ (void)showOverlayWithLabel:(NSString *)status Image:(UIImage *)image Options:(TAOverlayOptions)options {
-
++ (void)showOverlayWithLabel:(NSString *)status Image:(UIImage *)image Options:(TAOverlayOptions)options
+{
     NSParameterAssert(image != nil);
     
-    [self shared].labelText  = status;
-    [self shared].iconImage = image;
+    [self shared].didSetOverlayLabelFont = NO;
+    [self shared].didSetOverlayLabelText = NO;
+    [self shared].overlayText            = status;
+    [self shared].iconImage              = image;
     [[self shared] analyzeOptions:options image:YES imageArray:NO];
 }
 
-+ (void)showOverlayWithLabel:(NSString *)status ImageArray:(NSArray *)imageArray Duration:(CGFloat)duration Options:(TAOverlayOptions)options {
-    
++ (void)showOverlayWithLabel:(NSString *)status ImageArray:(NSArray *)imageArray Duration:(CGFloat)duration Options:(TAOverlayOptions)options
+{
     NSParameterAssert(imageArray != nil);
     
+    [self shared].didSetOverlayLabelFont  = NO;
+    [self shared].didSetOverlayLabelText  = NO;
     [self shared].customAnimationDuration = duration;
-    [self shared].labelText  = status;
-    [self shared].imageArray = imageArray;
+    [self shared].overlayText             = status;
+    [self shared].imageArray              = imageArray;
     [[self shared] analyzeOptions:options image:NO imageArray:YES];
+}
+
++ (void)hideOverlay
+{
+    [[self shared] overlayHideWithCompletionBlock:nil];
+}
+
++ (void)hideOverlayWithCompletion
+{
+    if ([self shared].completionBlock != nil)
+    {
+        [[self shared] overlayHideWithCompletionBlock:[self shared].completionBlock];
+    }
+    else
+    {
+        [[self shared] overlayHideWithCompletionBlock:nil];
+    }
+}
+
++ (void)hideOverlayWithCompletionBlock:(void (^)(BOOL))completionBlock
+{
+    [[self shared] overlayHideWithCompletionBlock:completionBlock];
 }
 
 #pragma mark Customization Methods
 
-+ (void)setOverlayBackgroundColor:(UIColor *)color {
-    
-    if (color != nil && ![self shared].showBlurred)
++ (void)setOverlayBackgroundColor:(UIColor *)color
+{
+    if (color != nil)
     {
         [self shared].overlayBackgroundColor = color;
     }
@@ -117,20 +188,22 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
     }
 }
 
-+ (void)setOverlayLabelFont:(UIFont *)font {
-    
++ (void)setOverlayLabelFont:(UIFont *)font
+{
     if (font != nil)
     {
-        [self shared].overlayFont = font;
+        [self shared].didSetOverlayLabelFont = YES;
+        [self shared].overlayFont            = font;
     }
     else
     {
-        [self shared].overlayFont = OVERLAY_LABEL_FONT;
+        [self shared].didSetOverlayLabelFont = YES;
+        [self shared].overlayFont            = OVERLAY_LABEL_FONT;
     }
 }
 
-+ (void)setOverlayLabelTextColor:(UIColor *)color {
-    
++ (void)setOverlayLabelTextColor:(UIColor *)color
+{
     if (color != nil)
     {
         [self shared].overlayFontColor = color;
@@ -141,8 +214,14 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
     }
 }
 
-+ (void)setOverlayShadowColor:(UIColor *)color {
-    
++ (void)setOverlayLabelText:(NSString *)text
+{
+    [self shared].didSetOverlayLabelText = YES;
+    [self shared].overlayText            = text;
+}
+
++ (void)setOverlayShadowColor:(UIColor *)color
+{
     if (color != nil && [self shared].showBackground)
     {
         [self shared].overlayShadowColor = color;
@@ -151,6 +230,36 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
     {
         [self shared].overlayShadowColor = OVERLAY_SHADOW_COLOR;
     }
+}
+
++ (void)setOverlayIconColor:(UIColor *)color
+{
+    if (color != nil)
+    {
+        [self shared].overlayIconColor = color;
+    }
+}
+
++ (void)setOverlayProgressColor:(UIColor *)color
+{
+    if (color != nil)
+    {
+        [self shared].overlayProgressColor = color;
+    }
+    else
+    {
+        [self shared].overlayProgressColor = OVERLAY_PROGRESS_COLOR;
+    }
+}
+
++ (void)setOverlayProgress:(CGFloat)overlayProgress
+{
+    [self shared].overlayProgress = overlayProgress;
+}
+
++ (void)setCompletionBlock:(void (^)(BOOL))completionBlock
+{
+    [self shared].completionBlock = completionBlock;
 }
 
 - (id)init
@@ -218,6 +327,14 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
         else if (OptionPresent(options, TAOverlayOptionOverlayTypeInfo))
         {
             self.overlayType = tOverlayTypeInfo;
+        }
+        else if (OptionPresent(options, TAOverlayOptionOverlayTypeProgress))
+        {
+            self.overlayType = tOverlayTypeProgress;
+        }
+        else if (OptionPresent(options, TAOverlayOptionOverlayTypeText))
+        {
+            self.overlayType = tOverlayTypeText;
         }
         else
         {
@@ -304,7 +421,7 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
     
     [self setProperties];
     
-    [self overlayMake:self.labelText];
+    [self overlayMake:_overlayText];
 }
 
 - (void) setProperties {
@@ -325,6 +442,33 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
     {
         _overlayShadowColor = OVERLAY_SHADOW_COLOR;
     }
+    
+    if (_overlayIconColor == nil || !self.didSetOverlayIconColor)
+    {
+        if (self.overlayType == tOverlayTypeSucess)
+        {
+            _overlayIconColor = OVERLAY_SUCCESS_COLOR;
+        }
+        else if (self.overlayType == tOverlayTypeWarning)
+        {
+            _overlayIconColor = OVERLAY_WARNING_COLOR;
+        }
+        else if (self.overlayType == tOverlayTypeError)
+        {
+            _overlayIconColor = OVERLAY_ERROR_COLOR;
+        }
+        else if (self.overlayType == tOverlayTypeInfo)
+        {
+            _overlayIconColor = OVERLAY_INFO_COLOR;
+        }
+    }
+    
+    _overlayProgress = 0.0;
+    
+    if (_overlayProgressColor == nil)
+    {
+        _overlayProgressColor = OVERLAY_PROGRESS_COLOR;
+    }
 }
 
 - (void)overlayMake:(NSString *)status
@@ -334,35 +478,81 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
      switch (overlayType) {
              
          case tOverlayTypeSucess:
+             [CATransaction begin];
+             [CATransaction setDisableActions:YES];
+             icon.strokeColor = nil;
+             icon.lineWidth = 0.0;
+             [icon setStrokeEnd:0.0];
+             [CATransaction commit];
              icon.path = [self bezierPathOfCheckSymbolWithRect:CGRectMake(0, 0, 40, 40) scale:0.5 thick:OVERLAY_ICON_THICKNESS].CGPath;
-             icon.fillColor = icon.borderColor = OVERLAY_SUCCESS_COLOR.CGColor;
+             icon.fillColor = icon.borderColor = _overlayIconColor.CGColor;
              [image removeFromSuperview];   image = nil;
              [spinner stopAnimating];
              [spinner removeFromSuperview]; spinner = nil;
              break;
              
          case tOverlayTypeError:
+             [CATransaction begin];
+             [CATransaction setDisableActions:YES];
+             icon.strokeColor = nil;
+             icon.lineWidth = 0.0;
+             [icon setStrokeEnd:0.0];
+             [CATransaction commit];
              icon.path = [self bezierPathOfCrossSymbolWithRect:CGRectMake(0, 0, 40, 40) scale:0.5 thick:OVERLAY_ICON_THICKNESS].CGPath;
-             icon.fillColor = icon.borderColor = OVERLAY_ERROR_COLOR.CGColor;
+             icon.fillColor = icon.borderColor = _overlayIconColor.CGColor;
              [image removeFromSuperview];   image = nil;
              [spinner stopAnimating];
              [spinner removeFromSuperview]; spinner = nil;
              break;
              
          case tOverlayTypeWarning:
+             [CATransaction begin];
+             [CATransaction setDisableActions:YES];
+             icon.strokeColor = nil;
+             icon.lineWidth = 0.0;
+             [icon setStrokeEnd:0.0];
+             [CATransaction commit];
              icon.path = [self bezierPathOfExcalmationSymbolWithRect:CGRectMake(0, 0, 40, 40) scale:0.5 thick:OVERLAY_ICON_THICKNESS].CGPath;
-             icon.fillColor = icon.borderColor = OVERLAY_WARNING_COLOR.CGColor;
+             icon.fillColor = icon.borderColor = _overlayIconColor.CGColor;
+             [icon setStrokeEnd:0.0];
              [image removeFromSuperview];   image = nil;
              [spinner stopAnimating];
              [spinner removeFromSuperview]; spinner = nil;
              break;
              
          case tOverlayTypeInfo:
+             [CATransaction begin];
+             [CATransaction setDisableActions:YES];
+             icon.strokeColor = nil;
+             icon.lineWidth = 0.0;
+             [icon setStrokeEnd:0.0];
+             [CATransaction commit];
              icon.path = [self bezierPathOfInfoSymbolWithRect:CGRectMake(0, 0, 40, 40) scale:0.5 thick:OVERLAY_ICON_THICKNESS].CGPath;
-             icon.fillColor = icon.borderColor = OVERLAY_INFO_COLOR.CGColor;
+             icon.fillColor = icon.borderColor = _overlayIconColor.CGColor;
              [image removeFromSuperview];   image = nil;
              [spinner stopAnimating];
              [spinner removeFromSuperview]; spinner = nil;
+             break;
+             
+         case tOverlayTypeProgress:
+             [CATransaction begin];
+             [CATransaction setDisableActions:YES];
+             icon.strokeColor = _overlayProgressColor.CGColor;
+             icon.lineWidth = OVERLAY_ICON_THICKNESS;
+             [icon setStrokeEnd:0.0];
+             icon.fillColor = icon.borderColor = [UIColor clearColor].CGColor;
+             [CATransaction commit];
+             icon.path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, 40 - OVERLAY_ICON_THICKNESS, 40 - OVERLAY_ICON_THICKNESS) cornerRadius:(40 - OVERLAY_ICON_THICKNESS)/2.0].CGPath;
+             [image removeFromSuperview];   image = nil;
+             [spinner stopAnimating];
+             [spinner removeFromSuperview]; spinner = nil;
+             break;
+             
+         case tOverlayTypeText:
+             [icon removeFromSuperlayer];   icon = nil;
+             [spinner stopAnimating];
+             [spinner removeFromSuperview]; spinner = nil;
+             [image removeFromSuperview];   image = nil;
              break;
              
          case tOverlayTypeActivityDefault:
@@ -543,6 +733,9 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
          icon.borderWidth = OVERLAY_ICON_THICKNESS;
          icon.cornerRadius = 20;
          icon.opacity = 1.0;
+         icon.strokeColor = [UIColor clearColor].CGColor;
+         icon.lineWidth = 0.0;
+         [icon setStrokeEnd:0.0];
      }
      if (icon.superlayer == nil) [overlay.layer addSublayer:icon];
      
@@ -609,7 +802,7 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
     switch (overlaySize)
     {
         case tOverlaySizeBar:
-            
+
             overlay.layer.cornerRadius = 0;
             overlayWidth  = [[UIScreen mainScreen] bounds].size.width;
             overlayHeight = 100;
@@ -618,22 +811,56 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
             {
                 NSDictionary *attributes = @{NSFontAttributeName:label.font};
                 NSInteger options = NSStringDrawingUsesFontLeading | NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin;
-                labelRect = [label.text boundingRectWithSize:CGSizeMake(overlayWidth - 2.0*LABEL_PADDING_X, 300) options:options attributes:attributes context:NULL];
+                labelRect = [label.text boundingRectWithSize:CGSizeMake(overlayWidth - 2.0*LABEL_PADDING_X, [self ifValue:667.000 IsValue:300.000 ThenValue:[UIScreen mainScreen].bounds.size.height]) options:options attributes:attributes context:NULL];
                 
-                overlayHeight = labelRect.size.height + 80;
+                overlayHeight = (labelRect.size.height + 80) > ([[UIScreen mainScreen] bounds].size.height - 2.0*LABEL_PADDING_X) ? ([[UIScreen mainScreen] bounds].size.height - 2.0*LABEL_PADDING_X) : (labelRect.size.height + 80);
+                
                 labelRect.origin.x = overlayWidth/2.0 - labelRect.size.width/2.0;
-                labelRect.origin.y = LABEL_PADDING_Y;
+                
+                if (self.overlayType == tOverlayTypeText)
+                {
+                    labelRect = CGRectMake(labelRect.origin.x, labelRect.origin.x, labelRect.size.width, overlayHeight - 2.0*labelRect.origin.x);
+                }
+                else
+                {
+                    labelRect.origin.y = LABEL_PADDING_Y;
+                }
             }
-            overlay.bounds = CGRectMake(0, 0, overlayWidth, overlayHeight);
+
+            if (OptionPresent(self.options, TAOverlayOptionOverlayAnimateTransistions))
+            {
+                if (CGRectEqualToRect(overlay.frame, CGRectZero))
+                {
+                    overlay.bounds = CGRectMake(0, 0, overlayWidth, overlayHeight);
+                    label.frame = labelRect;
+                }
+                else
+                {
+                    [UIView animateWithDuration:ANIMATION_DURATION animations:^{
+                        
+                        overlay.bounds = CGRectMake(0, 0, overlayWidth, overlayHeight);
+                        label.frame = labelRect;
+                    }];
+                }
+            }
+            else
+            {
+                overlay.bounds = CGRectMake(0, 0, overlayWidth, overlayHeight);
+                label.frame = labelRect;
+            }
+            
             imagex = overlayWidth/2;
             imagey = (label.text == nil) ? overlayHeight/2 : 36.0;
+            
+            [CATransaction begin];
+            [CATransaction setDisableActions:YES];
             image.center = spinner.center = icon.position = CGPointMake(imagex, imagey);
-            label.frame = labelRect;
+            [CATransaction commit];
             
             break;
             
         case tOverlaySizeFullScreen:
-            
+
             overlay.layer.cornerRadius = 0;
             overlayWidth  = [[UIScreen mainScreen] bounds].size.width;
             overlayHeight = [[UIScreen mainScreen] bounds].size.height;
@@ -642,40 +869,108 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
             {
                 NSDictionary *attributes = @{NSFontAttributeName:label.font};
                 NSInteger options = NSStringDrawingUsesFontLeading | NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin;
-                labelRect = [label.text boundingRectWithSize:CGSizeMake(overlayWidth - 2.0*LABEL_PADDING_X, 300) options:options attributes:attributes context:NULL];
+                labelRect = [label.text boundingRectWithSize:CGSizeMake(overlayWidth - 2.0*LABEL_PADDING_X, [self ifValue:667.000 IsValue:300.000 ThenValue:[UIScreen mainScreen].bounds.size.height]) options:options attributes:attributes context:NULL];
                 
                 labelRect.origin.x = overlayWidth/2.0 - labelRect.size.width/2.0;
-                labelRect.origin.y = (overlayHeight/2.0) + 16.0;
+                
+                if (self.overlayType == tOverlayTypeText)
+                {
+                    labelRect = CGRectMake(labelRect.origin.x, labelRect.origin.x, labelRect.size.width, overlayHeight - 2.0*labelRect.origin.x);
+                }
+                else
+                {
+                    labelRect.origin.y = (overlayHeight/2.0) + 16.0;
+                }
             }
-            overlay.bounds = CGRectMake(0, 0, overlayWidth, overlayHeight);
+            
+            if (OptionPresent(self.options, TAOverlayOptionOverlayAnimateTransistions))
+            {
+                if (CGRectEqualToRect(overlay.frame, CGRectZero))
+                {
+                    overlay.bounds = CGRectMake(0, 0, overlayWidth, overlayHeight);
+                    label.frame = labelRect;
+                }
+                else
+                {
+                    [UIView animateWithDuration:ANIMATION_DURATION animations:^{
+                        
+                        overlay.bounds = CGRectMake(0, 0, overlayWidth, overlayHeight);
+                        label.frame = labelRect;
+                    }];
+                }
+            }
+            else
+            {
+                overlay.bounds = CGRectMake(0, 0, overlayWidth, overlayHeight);
+                label.frame = labelRect;
+            }
+
+            
             imagex = overlayWidth/2;
             imagey = (label.text == nil) ? overlayHeight/2 : (overlayHeight/2.0) - 14.0;
+            
+            [CATransaction begin];
+            [CATransaction setDisableActions:YES];
             image.center = spinner.center = icon.position = CGPointMake(imagex, imagey);
-            label.frame = labelRect;
+            [CATransaction commit];
             
             break;
             
         case tOverlaySizeRoundedRect:
-            
+
             overlay.layer.cornerRadius = 10;
             overlayWidth  = 100;
             overlayHeight = 100;
+            
             if (label.text != nil)
             {
                 NSDictionary *attributes = @{NSFontAttributeName:label.font};
                 NSInteger options = NSStringDrawingUsesFontLeading | NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin;
-                labelRect = [label.text boundingRectWithSize:CGSizeMake(200, 300) options:options attributes:attributes context:NULL];
+                labelRect = [label.text boundingRectWithSize:CGSizeMake(200, [self ifValue:667.000 IsValue:300.000 ThenValue:[UIScreen mainScreen].bounds.size.height]) options:options attributes:attributes context:NULL];
                 
-                overlayHeight = labelRect.size.height + 80;
+                overlayHeight = (labelRect.size.height + 80) > ([[UIScreen mainScreen] bounds].size.height - 2.0*LABEL_PADDING_X) ? ([[UIScreen mainScreen] bounds].size.height - 2.0*LABEL_PADDING_X) : (labelRect.size.height + 80);
                 overlayWidth = ((labelRect.size.width + 2.0*LABEL_PADDING_X) < 100.0) ? 100.0 : labelRect.size.width + 2.0*LABEL_PADDING_X;
                 labelRect.origin.x = overlayWidth/2.0 - labelRect.size.width/2.0;
-                labelRect.origin.y = LABEL_PADDING_Y;
+                
+                if (self.overlayType == tOverlayTypeText)
+                {
+                    labelRect = CGRectMake(labelRect.origin.x, labelRect.origin.x, labelRect.size.width, overlayHeight - 2.0*labelRect.origin.x);
+                }
+                else
+                {
+                    labelRect.origin.y = LABEL_PADDING_Y;
+                }
             }
-            overlay.bounds = CGRectMake(0, 0, overlayWidth, overlayHeight);
+            
+            if (OptionPresent(self.options, TAOverlayOptionOverlayAnimateTransistions))
+            {
+                if (CGRectEqualToRect(overlay.frame, CGRectZero))
+                {
+                    overlay.bounds = CGRectMake(0, 0, overlayWidth, overlayHeight);
+                    label.frame = labelRect;
+                }
+                else
+                {
+                    [UIView animateWithDuration:ANIMATION_DURATION animations:^{
+                        
+                        overlay.bounds = CGRectMake(0, 0, overlayWidth, overlayHeight);
+                        label.frame = labelRect;
+                    }];
+                }
+            }
+            else
+            {
+                overlay.bounds = CGRectMake(0, 0, overlayWidth, overlayHeight);
+                label.frame = labelRect;
+            }
+            
             imagex = overlayWidth/2;
             imagey = (label.text == nil) ? overlayHeight/2 : 36.0;
+            
+            [CATransaction begin];
+            [CATransaction setDisableActions:YES];
             image.center = spinner.center = icon.position = CGPointMake(imagex, imagey);
-            label.frame = labelRect;
+            [CATransaction commit];
             
             break;
     }
@@ -731,8 +1026,39 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
 	return 0;
 }
 
-- (NSDictionary *)getUserInfo{
+- (NSDictionary *)getUserInfo
+{
     return (label.text ? @{TAOverlayLabelTextUserInfoKey : label.text} : nil);
+}
+
+- (void)setProgress:(CGFloat)progress Animated:(BOOL)animated
+{
+    if (self.overlayType == tOverlayTypeProgress)
+    {
+        [CATransaction begin];
+        [CATransaction setCompletionBlock:^{
+        
+            if (progress >= 1.0)
+            {
+                NSDictionary *userInfo = [self getUserInfo];
+                [[NSNotificationCenter defaultCenter] postNotificationName:TAOverlayProgressCompletedNotification object:nil userInfo:userInfo];
+            }
+        }];
+        
+        if (animated)
+        {
+            [self.icon setStrokeEnd:progress];
+        }
+        else
+        {
+            [CATransaction begin];
+            [CATransaction setDisableActions:YES];
+            [self.icon setStrokeEnd:progress];
+            [CATransaction commit];
+        }
+        
+        [CATransaction commit];
+    }
 }
 
 - (void)overlayShow
@@ -763,7 +1089,7 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
 	}
 }
 
-- (void)overlayHide
+- (void)overlayHideWithCompletionBlock:(void (^)(BOOL))completionBlock
 {
 	if (self.alpha == 1)
 	{
@@ -788,6 +1114,10 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
             [[NSNotificationCenter defaultCenter] postNotificationName:TAOverlayDidDisappearNotification
                                                                 object:nil
                                                               userInfo:userInfo];
+            if (completionBlock != nil)
+            {
+                completionBlock(finished);
+            }
 		}];
 	}
 }
@@ -805,7 +1135,7 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
 		dispatch_async(dispatch_get_main_queue(), ^{
             if (!self.willHide)
             {
-                [self overlayHide];
+                [self overlayHideWithCompletionBlock:_completionBlock];
             }
 		});
 	}
@@ -817,7 +1147,7 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
     
     if (self.userDismissTap)
     {
-        [self overlayHide];
+        [self overlayHideWithCompletionBlock:_completionBlock];
     }
 }
 
@@ -825,7 +1155,7 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
     
     if (self.userDismissSwipe)
     {
-        [self overlayHide];
+        [self overlayHideWithCompletionBlock:_completionBlock];
     }
 }
 
@@ -833,41 +1163,178 @@ NSString * const TAOverlayLabelTextUserInfoKey      = @"TAOverlayLabelTextUserIn
 
 - (void) setOverlayBackgroundColor:(UIColor *)overlayBackgroundColor {
     
+    _overlayBackgroundColor = overlayBackgroundColor;
+
     if (overlayBackgroundColor != nil)
     {
-        _overlayBackgroundColor = overlayBackgroundColor;
-        overlay.barTintColor = _overlayBackgroundColor;
+        if (!showBlurred)
+        {
+            overlay.barTintColor = _overlayBackgroundColor;
+        }
+    }
+    else
+    {
+        if (!showBlurred)
+        {
+            overlay.barTintColor = OVERLAY_BACKGROUND_COLOR;
+        }
     }
 }
 
 - (void)setOverlayFont:(UIFont *)overlayFont {
     
+    _overlayFont = overlayFont;
     if (overlayFont != nil)
     {
-        _overlayFont = overlayFont;
-        label.font = _overlayFont;
-        [self overlayDimensionsWithNotification:nil];
+        if (label != nil)
+        {
+            label.font = _overlayFont;
+            
+            if (self.didSetOverlayLabelFont)
+            {
+                [self overlayDimensionsWithNotification:nil];
+            }
+        }
+    }
+    else
+    {
+        if (label != nil)
+        {
+            label.font = OVERLAY_LABEL_FONT;
+            
+            if (self.didSetOverlayLabelFont)
+            {
+                [self overlayDimensionsWithNotification:nil];
+            }
+        }
     }
 }
 
 - (void)setOverlayFontColor:(UIColor *)overlayFontColor {
     
+    _overlayFontColor = overlayFontColor;
     if (overlayFontColor != nil)
     {
-        _overlayFontColor = overlayFontColor;
         label.textColor = _overlayFontColor;
+    }
+    else
+    {
+        label.textColor = OVERLAY_LABEL_COLOR;
+    }
+}
+
+- (void)setOverlayText:(NSString *)overlayText {
+    
+    _overlayText = overlayText;
+    self.label.text = _overlayText;
+    if (label != nil && self.didSetOverlayLabelText)
+    {
+        [self overlayDimensionsWithNotification:nil];
     }
 }
 
 - (void)setOverlayShadowColor:(UIColor *)overlayShadowColor {
     
-    if (overlayShadowColor != nil) {
-        _overlayShadowColor = overlayShadowColor;
+    _overlayShadowColor = overlayShadowColor;
+    if (_overlayShadowColor != nil)
+    {
         self.background.backgroundColor = _overlayShadowColor;
+    }
+    else
+    {
+        self.background.backgroundColor = OVERLAY_SHADOW_COLOR;
     }
 }
 
-#pragma mark UIBezierPath
+- (void)setOverlayProgressColor:(UIColor *)overlayProgressColor {
+    
+    _overlayProgressColor = overlayProgressColor;
+    if (self.overlayType == tOverlayTypeProgress)
+    {
+        if (_overlayProgressColor != nil)
+        {
+            icon.strokeColor = _overlayProgressColor.CGColor;
+        }
+        else
+        {
+            icon.strokeColor = OVERLAY_PROGRESS_COLOR.CGColor;
+        }
+    }
+    
+}
+
+- (void)setOverlayIconColor:(UIColor *)overlayIconColor {
+
+    _overlayIconColor = overlayIconColor;
+    
+    if (_overlayIconColor != nil)
+    {
+        self.didSetOverlayIconColor = YES;
+
+        if (self.overlayType != tOverlayTypeProgress)
+        {
+            self.icon.fillColor   = _overlayIconColor.CGColor;
+            self.icon.borderColor = _overlayIconColor.CGColor;
+        }
+    }
+    else
+    {
+        self.didSetOverlayIconColor = NO;
+
+        if (self.overlayType != tOverlayTypeProgress)
+        {
+            if (self.overlayType == tOverlayTypeSucess)
+            {
+                _overlayIconColor = OVERLAY_SUCCESS_COLOR;
+            }
+            else if (self.overlayType == tOverlayTypeWarning)
+            {
+                _overlayIconColor = OVERLAY_WARNING_COLOR;
+            }
+            else if (self.overlayType == tOverlayTypeError)
+            {
+                _overlayIconColor = OVERLAY_ERROR_COLOR;
+            }
+            else if (self.overlayType == tOverlayTypeInfo)
+            {
+                _overlayIconColor = OVERLAY_INFO_COLOR;
+            }
+            
+            self.icon.fillColor   = _overlayIconColor.CGColor;
+            self.icon.borderColor = _overlayIconColor.CGColor;
+        }
+    }
+}
+
+- (void)setOverlayProgress:(CGFloat)overlayProgress {
+    
+    if (overlayProgress >= 0.0)
+    {
+        if (overlayProgress <= 1.0)
+        {
+            _overlayProgress = overlayProgress;
+            [self setProgress:_overlayProgress Animated:YES];
+        }
+        else
+        {
+            _overlayProgress = 1.0;
+            [self setProgress:_overlayProgress Animated:YES];
+        }
+    }
+    
+}
+
+- (void)setCompletionBlock:(void (^)(BOOL))completionBlock {
+    
+    _completionBlock = completionBlock;
+}
+
+#pragma mark Helper Methods
+
+- (CGFloat) ifValue:(CGFloat)ifValue IsValue:(CGFloat)isValue ThenValue:(CGFloat)thenValue
+{
+    return (thenValue * isValue) / ifValue;
+}
 
 - (UIBezierPath *)bezierPathOfInfoSymbolWithRect:(CGRect)rect scale:(CGFloat)scale thick:(CGFloat)thick
 {
