@@ -222,14 +222,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
 
 + (void)setOverlayShadowColor:(UIColor *)color
 {
-    if (color != nil && [self shared].showBackground)
-    {
-        [self shared].overlayShadowColor = color;
-    }
-    else
-    {
-        [self shared].overlayShadowColor = OVERLAY_SHADOW_COLOR;
-    }
+    [self shared].overlayShadowColor = color;
 }
 
 + (void)setOverlayIconColor:(UIColor *)color
@@ -646,6 +639,46 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
         overlay.backgroundColor = OVERLAY_BLUR_TINT_COLOR;
     }
     
+    if (self.userDismissSwipe)
+    {
+        if (swipeUpDownGesture == nil && (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeUp) | OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeDown)))
+        {
+            swipeUpDownGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+            
+            if (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeUp))
+            {
+                swipeUpDownGesture.direction = UISwipeGestureRecognizerDirectionUp;
+            }
+            if (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeDown))
+            {
+                swipeUpDownGesture.direction = (swipeUpDownGesture.direction | UISwipeGestureRecognizerDirectionDown);
+            }
+            
+            [window addGestureRecognizer:swipeUpDownGesture];
+        }
+        if (swipeLeftRightGesture == nil && (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeLeft) | OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeRight)))
+        {
+            swipeLeftRightGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
+            
+            if (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeLeft))
+            {
+                swipeLeftRightGesture.direction = UISwipeGestureRecognizerDirectionLeft;
+            }
+            if (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeRight))
+            {
+                swipeLeftRightGesture.direction = (swipeLeftRightGesture.direction | UISwipeGestureRecognizerDirectionRight);
+            }
+            
+            [window addGestureRecognizer:swipeLeftRightGesture];
+        }
+    }
+    
+    if (tapGesture == nil && self.userDismissTap)
+    {
+        tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
+        [window addGestureRecognizer:tapGesture];
+    }
+    
 	[self overlayDimensionsWithNotification:nil];
 	[self overlayShow];
  	if (shouldHide) [NSThread detachNewThreadSelector:@selector(autoHide) toTarget:self withObject:nil];
@@ -676,46 +709,6 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
 			[background addSubview:overlay];
 		}
 		else [window addSubview:overlay];
-        
-        if (tapGesture == nil && self.userDismissTap)
-        {
-            tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)];
-            [window addGestureRecognizer:tapGesture];
-        }
-        
-        if (self.userDismissSwipe)
-        {
-            if (swipeUpDownGesture == nil && (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeUp) | OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeDown)))
-            {
-                swipeUpDownGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
-            
-                if (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeUp))
-                {
-                    swipeUpDownGesture.direction = UISwipeGestureRecognizerDirectionUp;
-                }
-                if (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeDown))
-                {
-                    swipeUpDownGesture.direction = (swipeUpDownGesture.direction | UISwipeGestureRecognizerDirectionDown);
-                }
-                
-                [window addGestureRecognizer:swipeUpDownGesture];
-            }
-            if (swipeLeftRightGesture == nil && (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeLeft) | OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeRight)))
-            {
-                swipeLeftRightGesture = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipe:)];
-                
-                if (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeLeft))
-                {
-                    swipeLeftRightGesture.direction = UISwipeGestureRecognizerDirectionLeft;
-                }
-                if (OptionPresent(self.options, TAOverlayOptionOverlayDismissSwipeRight))
-                {
-                    swipeLeftRightGesture.direction = (swipeLeftRightGesture.direction | UISwipeGestureRecognizerDirectionRight);
-                }
-                
-                [window addGestureRecognizer:swipeLeftRightGesture];
-            }
-        }
 	}
  	if (spinner == nil)
 	{
