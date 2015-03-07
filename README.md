@@ -10,7 +10,7 @@
 
 ![TAOverlay](https://raw.githubusercontent.com/TaimurAyaz/TAOverlay/master/screenshot.png)
 
-## What's new in v2.0
+## What's new in v2.0.1
 
 * Added completion block support on overlay hide
 * Enhanced hide methods
