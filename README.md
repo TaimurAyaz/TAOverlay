@@ -1,3 +1,4 @@
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/TaimurAyaz/taoverlay/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 [![Build Status](https://travis-ci.org/TaimurAyaz/TAOverlay.svg?branch=master)](https://travis-ci.org/TaimurAyaz/TAOverlay) 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Platform](https://img.shields.io/badge/platform-iOS-yellow.svg)
