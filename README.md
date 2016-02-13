@@ -27,7 +27,7 @@
 
 **TAOverlay** can be installed using either of the following:
 
-### Cocoapods
+### CocoaPods
 
 Add the following to your **podfile**
 ```
