@@ -120,6 +120,12 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
 
 #pragma mark Show/Hide Methods
 
++ (void)updateOverlayWithLabel:(NSString *)status{
+    [self shared].didSetOverlayLabelFont = NO;
+    [self shared].didSetOverlayLabelText = YES;
+    [self shared].overlayText = status;
+}
+
 + (void)showOverlayWithLabel:(NSString *)status Options:(TAOverlayOptions)options{
     
     [self shared].didSetOverlayLabelFont = NO;
