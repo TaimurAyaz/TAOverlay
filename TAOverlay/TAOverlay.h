@@ -243,6 +243,13 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 #pragma mark Show/Hide Methods
 
 /**
+ * Updates the current overlay's label text, without reseting the animation. (Good to display a progression!)
+ *
+ * @param status The text to display on the overlay. If the value is 'nil', overlay is shown without a label.
+ */
++ (void)updateOverlayWithLabel:(NSString *)status;
+
+/**
  * Shows an overlay with a label and a predefined icon.
  *
  * @param status The text to display on the overlay. If the value is 'nil', overlay is shown without a label.
