@@ -783,6 +783,18 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
 	[background removeFromSuperview];	background = nil;
 }
 
+- (CGRect)screenRect
+{
+    CGRect rect = [[UIScreen mainScreen] bounds];
+    rect.size.width = self.window.bounds.size.width;
+    return rect;
+}
+
+- (CGFloat)screenWidth
+{
+    return self.screenRect.size.width;
+}
+
 - (void)overlayDimensionsWithNotification:(NSNotification *)notification
 {
 	CGFloat heightKeyboard  = 0;
@@ -797,7 +809,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
         case tOverlaySizeBar:
 
             overlay.layer.cornerRadius = 0;
-            overlayWidth  = [[UIScreen mainScreen] bounds].size.width;
+            overlayWidth  = self.screenWidth;
             overlayHeight = 100;
             
             if (label.text != nil)
@@ -855,7 +867,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
         case tOverlaySizeFullScreen:
 
             overlay.layer.cornerRadius = 0;
-            overlayWidth  = [[UIScreen mainScreen] bounds].size.width;
+            overlayWidth  = self.screenWidth;
             overlayHeight = [[UIScreen mainScreen] bounds].size.height;
             
             if (label.text != nil)
@@ -982,7 +994,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     {
         heightKeyboard = [self keyboardHeight];
     }
- 	CGRect screen = [UIScreen mainScreen].bounds;
+    CGRect screen = self.screenRect;
 	CGPoint center = CGPointMake(screen.size.width/2, (screen.size.height-heightKeyboard)/2);
  	[UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^
     {
