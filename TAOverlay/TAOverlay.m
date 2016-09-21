@@ -1466,17 +1466,17 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
 
 - (UIImage*)leafImage:(NSString*)name
 {
-    return [[self bundleImage:name] maskImageWithColor:OVERLAY_ACTIVITY_LEAF_COLOR];
+    return [[self bundleImage:name] maskImageWithColor:self.overlayIconColor!=nil?self.overlayIconColor:OVERLAY_ACTIVITY_LEAF_COLOR];
 }
 
 - (UIImage*)squareImage:(NSString*)name
 {
-    return [[self bundleImage:name] maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR];
+    return [[self bundleImage:name] maskImageWithColor:self.overlayIconColor!=nil?self.overlayIconColor:OVERLAY_ACTIVITY_SQUARE_COLOR];
 }
 
 - (UIImage*)blurImage:(NSString*)name
 {
-    return [[self bundleImage:name] maskImageWithColor:OVERLAY_ACTIVITY_BLUR_COLOR];
+    return [[self bundleImage:name] maskImageWithColor:self.overlayIconColor!=nil?self.overlayIconColor:OVERLAY_ACTIVITY_BLUR_COLOR];
 }
 
 - (NSArray*)leafImages
