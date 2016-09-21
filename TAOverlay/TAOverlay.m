@@ -560,7 +560,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
              [spinner removeFromSuperview];    spinner = nil;
              if (image.image != nil) image.image = nil;
              image.frame = CGRectMake(0, 0, 50, 50);
-             image.animationImages = OVERLAY_ACTIVITY_LEAF_ARRAY;
+             image.animationImages = self.leafImages;
              image.animationDuration = 1;
              if (!image.isAnimating) [image startAnimating];
              imageArray = nil;
@@ -572,7 +572,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
              [spinner removeFromSuperview];    spinner = nil;
              if (image.image != nil) image.image = nil;
              image.frame = CGRectMake(0, 0, 50, 50);
-             image.animationImages = OVERLAY_ACTIVITY_BLUR_ARRAY;
+             image.animationImages = self.blurImages;
              image.animationDuration = 1;
              if (!image.isAnimating) [image startAnimating];
              imageArray = nil;
@@ -584,7 +584,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
              [spinner removeFromSuperview];    spinner = nil;
              if (image.image != nil) image.image = nil;
              image.frame = CGRectMake(0, 0, 50, 50);
-             image.animationImages = OVERLAY_ACTIVITY_SQUARE_ARRAY;
+             image.animationImages = self.squareImages;
              image.animationDuration = 0.35;
              if (!image.isAnimating) [image startAnimating];
              imageArray = nil;
@@ -1450,6 +1450,123 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     [path addLineToPoint:CGPointWithOffset(CGPointMake(halfWidth - offset, halfHeight), offsetPoint)];
     [path closePath];
     return path;
+}
+
+#pragma mark Resources
+
+- (UIImage*)bundleImage:(NSString*)name
+{
+    if ([[UIImage class] respondsToSelector:@selector(imageNamed:inBundle:compatibleWithTraitCollection:)])
+    {
+        UIImage *img = [UIImage imageNamed:name inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil];
+        return img;
+    }
+    return [UIImage imageNamed:name];
+}
+
+- (UIImage*)leafImage:(NSString*)name
+{
+    return [[self bundleImage:name] maskImageWithColor:OVERLAY_ACTIVITY_LEAF_COLOR];
+}
+
+- (UIImage*)squareImage:(NSString*)name
+{
+    return [[self bundleImage:name] maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR];
+}
+
+- (UIImage*)blurImage:(NSString*)name
+{
+    return [[self bundleImage:name] maskImageWithColor:OVERLAY_ACTIVITY_BLUR_COLOR];
+}
+
+- (NSArray*)leafImages
+{
+    return [NSArray arrayWithObjects:
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/1.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/2.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/3.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/4.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/5.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/6.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/7.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/8.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/9.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/10.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/11.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/12.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/13.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/14.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/15.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/16.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/17.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/18.png"],
+        nil];
+}
+
+- (NSArray*)squareImages
+{
+    return [NSArray arrayWithObjects:
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/1.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/2.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/3.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/4.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/5.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/6.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/7.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/8.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/9.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/10.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/11.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/12.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/13.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/14.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/15.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/16.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/17.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/18.png"],
+        nil];
+}
+
+- (NSArray*)blurImages
+{
+    return [NSArray arrayWithObjects:
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/1.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/2.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/3.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/4.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/5.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/6.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/7.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/8.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/9.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/10.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/11.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/12.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/13.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/14.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/15.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/16.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/17.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/18.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/19.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/18.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/17.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/16.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/15.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/14.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/13.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/12.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/11.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/10.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/9.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/8.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/7.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/6.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/5.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/4.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/3.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/2.png"],
+        nil];
 }
 
 @end
