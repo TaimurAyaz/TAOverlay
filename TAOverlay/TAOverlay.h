@@ -136,6 +136,9 @@ extern NSString * const TAOverlayProgressCompletedNotification;
 /** TAOverlay user info key. Notifications can provide current status, if not 'nil'. */
 extern NSString * const TAOverlayLabelTextUserInfoKey;
 
+/** TAOverlay completion block */
+typedef void(^TAOverlayCompletionBlock)( BOOL finished,BOOL dismissed);
+
 /** Overlay enum indicating the type of the overlay. */
 typedef NS_ENUM(NSInteger, TOverlayType)
 {
@@ -268,7 +271,7 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
  *
  * @param completionBlock The block of code to run on sucessful quit of the overlay.
  */
-+ (void)hideOverlayWithCompletionBlock:(void (^)(BOOL finished))completionBlock;
++ (void)hideOverlayWithCompletionBlock:(TAOverlayCompletionBlock)completionBlock;
 
 
 #pragma mark Customization Methods
@@ -334,12 +337,12 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
  *
  * @param completionBlock The block of code to run on sucessful quit of the overlay.
  */
-+ (void)setCompletionBlock:(void (^)(BOOL))completionBlock;
++ (void)setCompletionBlock:(TAOverlayCompletionBlock)completionBlock;
 
 #pragma mark Properties
 
 /** Property for the completion block. */
-@property (nonatomic, copy) void (^completionBlock)(BOOL finished);
+@property (nonatomic, copy) TAOverlayCompletionBlock completionBlock;
 
 /** The current application window. */
 @property (nonatomic, retain) UIWindow                 *window;
