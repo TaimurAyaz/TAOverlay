@@ -81,6 +81,9 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
 /** A boolean value indicating if the overlay is user dismissible by swipe gesture. */
 @property (nonatomic, assign) BOOL userDismissSwipe;
 
+/** A boolean value indicating whether the overlay was dismissed by either a tap gesture or a swipe gesture */
+@property (nonatomic, assign) BOOL didDismiss;
+
 /** A boolean value indicating if the user set a custom icon color. */
 @property (nonatomic, assign) BOOL didSetOverlayIconColor;
 
@@ -169,7 +172,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     }
 }
 
-+ (void)hideOverlayWithCompletionBlock:(void (^)(BOOL))completionBlock
++ (void)hideOverlayWithCompletionBlock:(TAOverlayCompletionBlock)completionBlock
 {
     [[self shared] overlayHideWithCompletionBlock:completionBlock];
 }
@@ -250,7 +253,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     [self shared].overlayProgress = overlayProgress;
 }
 
-+ (void)setCompletionBlock:(void (^)(BOOL))completionBlock
++ (void)setCompletionBlock:(TAOverlayCompletionBlock)completionBlock
 {
     [self shared].completionBlock = completionBlock;
 }
@@ -286,6 +289,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
 - (void) analyzeOptions:(TAOverlayOptions)options image:(BOOL)hasImage imageArray:(BOOL)hasImageArray {
 
     self.options = options;
+    self.didDismiss = NO;
     
     if (!hasImage && !hasImageArray)
     {
@@ -1082,7 +1086,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
 	}
 }
 
-- (void)overlayHideWithCompletionBlock:(void (^)(BOOL))completionBlock
+- (void)overlayHideWithCompletionBlock:(TAOverlayCompletionBlock)completionBlock
 {
 	if (self.alpha == 1)
 	{
@@ -1109,7 +1113,8 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
                                                               userInfo:userInfo];
             if (completionBlock != nil)
             {
-                completionBlock(finished);
+                BOOL dismissed = self.didDismiss;
+                completionBlock(finished,dismissed);
             }
 		}];
 	}
@@ -1140,6 +1145,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     
     if (self.userDismissTap)
     {
+        self.didDismiss = YES;
         [self overlayHideWithCompletionBlock:_completionBlock];
     }
 }
@@ -1148,6 +1154,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     
     if (self.userDismissSwipe)
     {
+        self.didDismiss = YES;
         [self overlayHideWithCompletionBlock:_completionBlock];
     }
 }
@@ -1317,7 +1324,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     
 }
 
-- (void)setCompletionBlock:(void (^)(BOOL))completionBlock {
+- (void)setCompletionBlock:(TAOverlayCompletionBlock)completionBlock {
     
     _completionBlock = completionBlock;
 }

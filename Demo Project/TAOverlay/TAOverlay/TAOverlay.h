@@ -141,6 +141,7 @@ CGPointMake(originPoint.x + offsetPoint.x, originPoint.y + offsetPoint.y)
  */
 #define OVERLAY_ACTIVITY_SQUARE_ARRAY                                                                                                         [NSArray arrayWithObjects:                                                                                                                                                                                             [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/1.png"]  maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                       [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/2.png"]  maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                               [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/3.png"]  maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                                [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/4.png"]  maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                                [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/5.png"]  maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                                [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/6.png"]  maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                                [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/7.png"]  maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                                [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/8.png"]  maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                                [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/9.png"]  maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                                [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/10.png"] maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                                [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/11.png"] maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                                [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/12.png"] maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                                [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/13.png"] maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                                [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/14.png"] maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                                [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/15.png"] maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                                [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/16.png"] maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                                [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/17.png"] maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR],                                                [[UIImage imageNamed:@"TAOverlay.bundle/ACTIVITY_square/18.png"] maskImageWithColor:OVERLAY_ACTIVITY_SQUARE_COLOR], nil]
 
+typedef void(^TAOverlayCompletionBlock)( BOOL finished,BOOL dismissed);
 
 /** Available notifications for TAOverlay. */
 extern NSString * const TAOverlayWillDisappearNotification;
@@ -284,7 +285,7 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
  *
  * @param completionBlock The block of code to run on sucessful quit of the overlay.
  */
-+ (void)hideOverlayWithCompletionBlock:(void (^)(BOOL finished))completionBlock;
++ (void)hideOverlayWithCompletionBlock:(TAOverlayCompletionBlock)completionBlock;
 
 
 #pragma mark Customization Methods
@@ -350,12 +351,12 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
  *
  * @param completionBlock The block of code to run on sucessful quit of the overlay.
  */
-+ (void)setCompletionBlock:(void (^)(BOOL))completionBlock;
++ (void)setCompletionBlock:(TAOverlayCompletionBlock)completionBlock;
 
 #pragma mark Properties
 
 /** Property for the completion block. */
-@property (nonatomic, copy) void (^completionBlock)(BOOL finished);
+@property (nonatomic, copy) TAOverlayCompletionBlock completionBlock;
 
 /** The current application window. */
 @property (nonatomic, retain) UIWindow                 *window;
