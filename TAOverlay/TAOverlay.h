@@ -127,14 +127,14 @@
 CGPointMake(originPoint.x + offsetPoint.x, originPoint.y + offsetPoint.y)
 
 /** Available notifications for TAOverlay. */
-extern NSString * const TAOverlayWillDisappearNotification;
-extern NSString * const TAOverlayDidDisappearNotification;
-extern NSString * const TAOverlayWillAppearNotification;
-extern NSString * const TAOverlayDidAppearNotification;
-extern NSString * const TAOverlayProgressCompletedNotification;
+extern NSString * _Nonnull const TAOverlayWillDisappearNotification;
+extern NSString * _Nonnull const TAOverlayDidDisappearNotification;
+extern NSString * _Nonnull const TAOverlayWillAppearNotification;
+extern NSString * _Nonnull const TAOverlayDidAppearNotification;
+extern NSString * _Nonnull const TAOverlayProgressCompletedNotification;
 
 /** TAOverlay user info key. Notifications can provide current status, if not 'nil'. */
-extern NSString * const TAOverlayLabelTextUserInfoKey;
+extern NSString * _Nonnull const TAOverlayLabelTextUserInfoKey;
 
 /** TAOverlay completion block */
 typedef void(^TAOverlayCompletionBlock)( BOOL finished,BOOL dismissed);
@@ -215,7 +215,7 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
  *
  *  @return A new image object masked with the specified color.
  */
-- (UIImage *) maskImageWithColor:(UIColor *)color;
+- (nullable UIImage *) maskImageWithColor:(nonnull UIColor *)color;
 
 @end
 
@@ -225,7 +225,7 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 /** A minimalistic overlay for providing the user with useful information. */
 @interface TAOverlay : UIView
 
-+ (TAOverlay *)shared;
++ (nonnull TAOverlay *)shared;
 
 #pragma mark Show/Hide Methods
 
@@ -235,7 +235,7 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
  * @param status The text to display on the overlay. If the value is 'nil', overlay is shown without a label.
  * @param options A mask of options indicating the type and appearence of the overlay.
  */
-+ (void) showOverlayWithLabel:(NSString *)status Options:(TAOverlayOptions)options;
++ (void) showOverlayWithLabel:(nullable NSString *)status Options:(TAOverlayOptions)options;
 
 /**
  * Shows an overlay with a label and a user defined icon.
@@ -244,7 +244,7 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
  * @param image The image to display as an icon on the overlay. The image cannot be 'nil'.
  * @param options A mask of options indicating the type and appearence of the overlay.
  */
-+ (void) showOverlayWithLabel:(NSString *)status Image:(UIImage *)image Options:(TAOverlayOptions)options;
++ (void) showOverlayWithLabel:(nullable NSString *)status Image:(nonnull UIImage *)image Options:(TAOverlayOptions)options;
 
 /**
  * Shows an overlay with a label and an animating, user defined, image array.
@@ -254,7 +254,7 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
  * @param duration The duration of the animation to cycle through the array of images.
  * @param options A mask of options indicating the type and appearence of the overlay.
  */
-+ (void) showOverlayWithLabel:(NSString *)status ImageArray:(NSArray *)imageArray Duration:(CGFloat)duration Options:(TAOverlayOptions)options;
++ (void) showOverlayWithLabel:(nullable NSString *)status ImageArray:(nonnull NSArray *)imageArray Duration:(CGFloat)duration Options:(TAOverlayOptions)options;
 
 /**
  *  Hides currently shown overlay.
@@ -271,7 +271,7 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
  *
  * @param completionBlock The block of code to run on sucessful quit of the overlay.
  */
-+ (void)hideOverlayWithCompletionBlock:(TAOverlayCompletionBlock)completionBlock;
++ (void)hideOverlayWithCompletionBlock:(nullable TAOverlayCompletionBlock)completionBlock;
 
 
 #pragma mark Customization Methods
@@ -281,42 +281,42 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
  *
  * @param backgroundColor The color to set as the overlay background color.
  */
-+ (void)setOverlayBackgroundColor:(UIColor *)color;
++ (void)setOverlayBackgroundColor:(nullable UIColor *)color;
 
 /**
  * Changes the overlay label font to the specified font.
  *
  * @param font The font to set as the overlay label font.
  */
-+ (void)setOverlayLabelFont:(UIFont *)font;
++ (void)setOverlayLabelFont:(nullable UIFont *)font;
 
 /**
  * Changes the overlay label text color to the specified color.
  *
  * @param color The color to set as the overlay label text color.
  */
-+ (void)setOverlayLabelTextColor:(UIColor *)color;
++ (void)setOverlayLabelTextColor:(nullable UIColor *)color;
 
 /**
  * Changes the overlay label text to the specified text.
  *
  * @param text The text to set as the overlay label text.
  */
-+ (void)setOverlayLabelText:(NSString *)text;
++ (void)setOverlayLabelText:(nullable NSString *)text;
 
 /**
  * Changes the overlay shadow color to the specified color.
  *
  * @param color The color to set as the overlay shadow color.
  */
-+ (void)setOverlayShadowColor:(UIColor *)color;
++ (void)setOverlayShadowColor:(nullable UIColor *)color;
 
 /**
  * Changes the overlay icon color to the specified color.
  *
  * @param color The color to set as the overlay icon color.
  */
-+ (void)setOverlayIconColor:(UIColor *)color;
++ (void)setOverlayIconColor:(nullable UIColor *)color;
 
 /**
  * Sets the progess value for the overlay, if a progress overlay is shown.
@@ -330,67 +330,67 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
  *
  * @param color The color to set as the overlay progress bar color.
  */
-+ (void)setOverlayProgressColor:(UIColor *)color;
++ (void)setOverlayProgressColor:(nullable UIColor *)color;
 
 /**
  * Sets the completion block for the overlay.
  *
  * @param completionBlock The block of code to run on sucessful quit of the overlay.
  */
-+ (void)setCompletionBlock:(TAOverlayCompletionBlock)completionBlock;
++ (void)setCompletionBlock:(nullable TAOverlayCompletionBlock)completionBlock;
 
 #pragma mark Properties
 
 /** Property for the completion block. */
-@property (nonatomic, copy) TAOverlayCompletionBlock completionBlock;
+@property (nonatomic, copy, nullable) TAOverlayCompletionBlock completionBlock;
 
 /** The current application window. */
-@property (nonatomic, retain) UIWindow                 *window;
+@property (nonatomic, retain, nullable) UIWindow                 *window;
 
 /** The shadow of the overlay. */
-@property (nonatomic, retain) UIView                   *background;
+@property (nonatomic, retain, nullable) UIView                   *background;
 
 /** The overlay view. */
-@property (nonatomic, retain) UIToolbar                *overlay;
+@property (nonatomic, retain, nullable) UIToolbar                *overlay;
 
 /** The default activity indicator */
-@property (nonatomic, retain) UIActivityIndicatorView  *spinner;
+@property (nonatomic, retain, nullable) UIActivityIndicatorView  *spinner;
 
 /** The image view for image and image array based icons */
-@property (nonatomic, retain) UIImageView              *image;
+@property (nonatomic, retain, nullable) UIImageView              *image;
 
 /** The status label of the overlay */
-@property (nonatomic, retain) UILabel                  *label;
+@property (nonatomic, retain, nullable) UILabel                  *label;
 
 /** The Layer for warning, error, info and success icons. */
-@property (nonatomic, retain) CAShapeLayer             *icon;
+@property (nonatomic, retain, nullable) CAShapeLayer             *icon;
 
 /** The font of the overlay */
-@property (nonatomic, strong) UIFont                   *overlayFont;
+@property (nonatomic, strong, nullable) UIFont                   *overlayFont;
 
 /** The background color of the overlay */
-@property (nonatomic, strong) UIColor                  *overlayBackgroundColor;
+@property (nonatomic, strong, nullable) UIColor                  *overlayBackgroundColor;
 
 /** The shadow color of the overlay */
-@property (nonatomic, strong) UIColor                  *overlayShadowColor;
+@property (nonatomic, strong, nullable) UIColor                  *overlayShadowColor;
 
 /** The font color of the overlay */
-@property (nonatomic, strong) UIColor                  *overlayFontColor;
+@property (nonatomic, strong, nullable) UIColor                  *overlayFontColor;
 
 /** The icon color of the overlay */
-@property (nonatomic, strong) UIColor                  *overlayIconColor;
+@property (nonatomic, strong, nullable) UIColor                  *overlayIconColor;
 
 /** The progress bar color of the overlay */
-@property (nonatomic, strong) UIColor                  *overlayProgressColor;
+@property (nonatomic, strong, nullable) UIColor                  *overlayProgressColor;
 
 /** An array of images for use as a custom activity indicator. */
-@property (nonatomic, strong) NSArray                  *imageArray;
+@property (nonatomic, strong, nullable) NSArray                  *imageArray;
 
 /** The current label text. */
-@property (nonatomic, strong) NSString                 *overlayText;
+@property (nonatomic, strong, nullable) NSString                 *overlayText;
 
 /** The current icon image. */
-@property (nonatomic, strong) UIImage                  *iconImage;
+@property (nonatomic, strong, nullable) UIImage                  *iconImage;
 
 /** The animation duration of custom array. */
 @property (nonatomic) CGFloat                          overlayProgress;
