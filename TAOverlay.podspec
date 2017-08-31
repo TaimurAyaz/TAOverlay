@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
   s.name                = "TAOverlay"
-  s.version             = "2.0.1"
+  s.version             = "2.0.2"
   s.summary             = "TAOverlay is a minimalistic and simple overlay meant to display useful information to the user."
   s.homepage            = "https://github.com/TaimurAyaz/TAOverlay"
   s.screenshots         = "https://raw.githubusercontent.com/TaimurAyaz/TAOverlay/master/screenshot.png"

@@ -81,6 +81,9 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
 /** A boolean value indicating if the overlay is user dismissible by swipe gesture. */
 @property (nonatomic, assign) BOOL userDismissSwipe;
 
+/** A boolean value indicating if the overlay was dismissed by the user by a swipe or tap gesture */
+@property (nonatomic, assign) BOOL didDismiss;
+
 /** A boolean value indicating if the user set a custom icon color. */
 @property (nonatomic, assign) BOOL didSetOverlayIconColor;
 
@@ -169,7 +172,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     }
 }
 
-+ (void)hideOverlayWithCompletionBlock:(void (^)(BOOL))completionBlock
++ (void)hideOverlayWithCompletionBlock:(TAOverlayCompletionBlock)completionBlock
 {
     [[self shared] overlayHideWithCompletionBlock:completionBlock];
 }
@@ -185,6 +188,18 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     else
     {
         [self shared].overlayBackgroundColor = OVERLAY_BACKGROUND_COLOR;
+    }
+}
+
++ (void)setOverlayBlurTintColor:(nullable UIColor *)color
+{
+    if (color != nil)
+    {
+        [self shared].overlayBlurTintColor = color;
+    }
+    else
+    {
+        [self shared].overlayBlurTintColor = OVERLAY_BLUR_TINT_COLOR;
     }
 }
 
@@ -250,7 +265,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     [self shared].overlayProgress = overlayProgress;
 }
 
-+ (void)setCompletionBlock:(void (^)(BOOL))completionBlock
++ (void)setCompletionBlock:(TAOverlayCompletionBlock)completionBlock
 {
     [self shared].completionBlock = completionBlock;
 }
@@ -286,6 +301,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
 - (void) analyzeOptions:(TAOverlayOptions)options image:(BOOL)hasImage imageArray:(BOOL)hasImageArray {
 
     self.options = options;
+    self.didDismiss = NO;
     
     if (!hasImage && !hasImageArray)
     {
@@ -431,6 +447,10 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     {
         _overlayBackgroundColor = OVERLAY_BACKGROUND_COLOR;
     }
+    if (_overlayBlurTintColor == nil)
+    {
+        _overlayBlurTintColor = OVERLAY_BLUR_TINT_COLOR;
+    }
     if (_overlayShadowColor == nil)
     {
         _overlayShadowColor = OVERLAY_SHADOW_COLOR;
@@ -560,7 +580,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
              [spinner removeFromSuperview];    spinner = nil;
              if (image.image != nil) image.image = nil;
              image.frame = CGRectMake(0, 0, 50, 50);
-             image.animationImages = OVERLAY_ACTIVITY_LEAF_ARRAY;
+             image.animationImages = self.leafImages;
              image.animationDuration = 1;
              if (!image.isAnimating) [image startAnimating];
              imageArray = nil;
@@ -572,7 +592,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
              [spinner removeFromSuperview];    spinner = nil;
              if (image.image != nil) image.image = nil;
              image.frame = CGRectMake(0, 0, 50, 50);
-             image.animationImages = OVERLAY_ACTIVITY_BLUR_ARRAY;
+             image.animationImages = self.blurImages;
              image.animationDuration = 1;
              if (!image.isAnimating) [image startAnimating];
              imageArray = nil;
@@ -584,7 +604,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
              [spinner removeFromSuperview];    spinner = nil;
              if (image.image != nil) image.image = nil;
              image.frame = CGRectMake(0, 0, 50, 50);
-             image.animationImages = OVERLAY_ACTIVITY_SQUARE_ARRAY;
+             image.animationImages = self.squareImages;
              image.animationDuration = 0.35;
              if (!image.isAnimating) [image startAnimating];
              imageArray = nil;
@@ -636,7 +656,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     } else {
         overlay.translucent = YES;
         overlay.barTintColor = nil;
-        overlay.backgroundColor = OVERLAY_BLUR_TINT_COLOR;
+        overlay.backgroundColor = _overlayBlurTintColor;
     }
     
     if (self.userDismissSwipe)
@@ -783,6 +803,18 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
 	[background removeFromSuperview];	background = nil;
 }
 
+- (CGRect)screenRect
+{
+    CGRect rect = [[UIScreen mainScreen] bounds];
+    rect.size.width = self.window.bounds.size.width;
+    return rect;
+}
+
+- (CGFloat)screenWidth
+{
+    return self.screenRect.size.width;
+}
+
 - (void)overlayDimensionsWithNotification:(NSNotification *)notification
 {
 	CGFloat heightKeyboard  = 0;
@@ -797,7 +829,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
         case tOverlaySizeBar:
 
             overlay.layer.cornerRadius = 0;
-            overlayWidth  = [[UIScreen mainScreen] bounds].size.width;
+            overlayWidth  = self.screenWidth;
             overlayHeight = 100;
             
             if (label.text != nil)
@@ -855,7 +887,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
         case tOverlaySizeFullScreen:
 
             overlay.layer.cornerRadius = 0;
-            overlayWidth  = [[UIScreen mainScreen] bounds].size.width;
+            overlayWidth  = self.screenWidth;
             overlayHeight = [[UIScreen mainScreen] bounds].size.height;
             
             if (label.text != nil)
@@ -982,7 +1014,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     {
         heightKeyboard = [self keyboardHeight];
     }
- 	CGRect screen = [UIScreen mainScreen].bounds;
+    CGRect screen = self.screenRect;
 	CGPoint center = CGPointMake(screen.size.width/2, (screen.size.height-heightKeyboard)/2);
  	[UIView animateWithDuration:duration delay:0 options:UIViewAnimationOptionAllowUserInteraction animations:^
     {
@@ -1082,7 +1114,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
 	}
 }
 
-- (void)overlayHideWithCompletionBlock:(void (^)(BOOL))completionBlock
+- (void)overlayHideWithCompletionBlock:(TAOverlayCompletionBlock)completionBlock
 {
 	if (self.alpha == 1)
 	{
@@ -1109,7 +1141,8 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
                                                               userInfo:userInfo];
             if (completionBlock != nil)
             {
-                completionBlock(finished);
+                BOOL dismissed = self.didDismiss;
+                completionBlock(finished,dismissed);
             }
 		}];
 	}
@@ -1140,6 +1173,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     
     if (self.userDismissTap)
     {
+        self.didDismiss = YES;
         [self overlayHideWithCompletionBlock:_completionBlock];
     }
 }
@@ -1148,6 +1182,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     
     if (self.userDismissSwipe)
     {
+        self.didDismiss = YES;
         [self overlayHideWithCompletionBlock:_completionBlock];
     }
 }
@@ -1172,6 +1207,11 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
             overlay.barTintColor = OVERLAY_BACKGROUND_COLOR;
         }
     }
+}
+
+- (void) setOverlayBlurTintColor:(UIColor *)overlayBlurTintColor
+{
+    _overlayBlurTintColor = overlayBlurTintColor;
 }
 
 - (void)setOverlayFont:(UIFont *)overlayFont {
@@ -1317,7 +1357,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     
 }
 
-- (void)setCompletionBlock:(void (^)(BOOL))completionBlock {
+- (void)setCompletionBlock:(TAOverlayCompletionBlock)completionBlock {
     
     _completionBlock = completionBlock;
 }
@@ -1438,6 +1478,123 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     [path addLineToPoint:CGPointWithOffset(CGPointMake(halfWidth - offset, halfHeight), offsetPoint)];
     [path closePath];
     return path;
+}
+
+#pragma mark Resources
+
+- (UIImage*)bundleImage:(NSString*)name
+{
+    if ([[UIImage class] respondsToSelector:@selector(imageNamed:inBundle:compatibleWithTraitCollection:)])
+    {
+        UIImage *img = [UIImage imageNamed:name inBundle:[NSBundle bundleForClass:self.class] compatibleWithTraitCollection:nil];
+        return img;
+    }
+    return [UIImage imageNamed:name];
+}
+
+- (UIImage*)leafImage:(NSString*)name
+{
+    return [[self bundleImage:name] maskImageWithColor:self.overlayIconColor!=nil?self.overlayIconColor:OVERLAY_ACTIVITY_LEAF_COLOR];
+}
+
+- (UIImage*)squareImage:(NSString*)name
+{
+    return [[self bundleImage:name] maskImageWithColor:self.overlayIconColor!=nil?self.overlayIconColor:OVERLAY_ACTIVITY_SQUARE_COLOR];
+}
+
+- (UIImage*)blurImage:(NSString*)name
+{
+    return [[self bundleImage:name] maskImageWithColor:self.overlayIconColor!=nil?self.overlayIconColor:OVERLAY_ACTIVITY_BLUR_COLOR];
+}
+
+- (NSArray*)leafImages
+{
+    return [NSArray arrayWithObjects:
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/1.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/2.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/3.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/4.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/5.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/6.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/7.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/8.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/9.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/10.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/11.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/12.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/13.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/14.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/15.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/16.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/17.png"],
+        [self leafImage:@"TAOverlay.bundle/ACTIVITY_leaf/18.png"],
+        nil];
+}
+
+- (NSArray*)squareImages
+{
+    return [NSArray arrayWithObjects:
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/1.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/2.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/3.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/4.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/5.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/6.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/7.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/8.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/9.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/10.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/11.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/12.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/13.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/14.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/15.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/16.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/17.png"],
+        [self squareImage:@"TAOverlay.bundle/ACTIVITY_square/18.png"],
+        nil];
+}
+
+- (NSArray*)blurImages
+{
+    return [NSArray arrayWithObjects:
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/1.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/2.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/3.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/4.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/5.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/6.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/7.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/8.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/9.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/10.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/11.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/12.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/13.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/14.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/15.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/16.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/17.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/18.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/19.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/18.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/17.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/16.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/15.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/14.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/13.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/12.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/11.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/10.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/9.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/8.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/7.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/6.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/5.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/4.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/3.png"],
+        [self blurImage:@"TAOverlay.bundle/ACTIVITY_blur/2.png"],
+        nil];
 }
 
 @end
