@@ -284,6 +284,13 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 + (void)setOverlayBackgroundColor:(nullable UIColor *)color;
 
 /**
+ * Changes the overlay blur tint color to the specified color.
+ *
+ * @param backgroundColor The color to set as the overlay blur tint color.
+ */
++ (void)setOverlayBlurTintColor:(nullable UIColor *)color;
+
+/**
  * Changes the overlay label font to the specified font.
  *
  * @param font The font to set as the overlay label font.
@@ -370,6 +377,9 @@ typedef NS_OPTIONS(NSInteger, TAOverlayOptions)
 
 /** The background color of the overlay */
 @property (nonatomic, strong, nullable) UIColor                  *overlayBackgroundColor;
+
+/** The blur tint color of the overlay */
+@property (nonatomic, strong, nullable) UIColor                  *overlayBlurTintColor;
 
 /** The shadow color of the overlay */
 @property (nonatomic, strong, nullable) UIColor                  *overlayShadowColor;

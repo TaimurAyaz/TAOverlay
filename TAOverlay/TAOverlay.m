@@ -191,6 +191,18 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     }
 }
 
++ (void)setOverlayBlurTintColor:(nullable UIColor *)color
+{
+    if (color != nil)
+    {
+        [self shared].overlayBlurTintColor = color;
+    }
+    else
+    {
+        [self shared].overlayBlurTintColor = OVERLAY_BLUR_TINT_COLOR;
+    }
+}
+
 + (void)setOverlayLabelFont:(UIFont *)font
 {
     if (font != nil)
@@ -435,6 +447,10 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     {
         _overlayBackgroundColor = OVERLAY_BACKGROUND_COLOR;
     }
+    if (_overlayBlurTintColor == nil)
+    {
+        _overlayBlurTintColor = OVERLAY_BLUR_TINT_COLOR;
+    }
     if (_overlayShadowColor == nil)
     {
         _overlayShadowColor = OVERLAY_SHADOW_COLOR;
@@ -640,7 +656,7 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
     } else {
         overlay.translucent = YES;
         overlay.barTintColor = nil;
-        overlay.backgroundColor = OVERLAY_BLUR_TINT_COLOR;
+        overlay.backgroundColor = _overlayBlurTintColor;
     }
     
     if (self.userDismissSwipe)
@@ -1191,6 +1207,11 @@ NSString * const TAOverlayLabelTextUserInfoKey          = @"TAOverlayLabelTextUs
             overlay.barTintColor = OVERLAY_BACKGROUND_COLOR;
         }
     }
+}
+
+- (void) setOverlayBlurTintColor:(UIColor *)overlayBlurTintColor
+{
+    _overlayBlurTintColor = overlayBlurTintColor;
 }
 
 - (void)setOverlayFont:(UIFont *)overlayFont {
